@@ -1,0 +1,1 @@
+export { GameStatsCard } from "./GameStatsCard";
