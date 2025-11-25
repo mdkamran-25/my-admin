@@ -56,6 +56,10 @@ export const Dashboard = memo(() => {
     navigate("/withdraw-request");
   }, [navigate]);
 
+  const handleUsersClick = useCallback(() => {
+    navigate("/users");
+  }, [navigate]);
+
   // Loading State
   if (loading) {
     return (
@@ -118,6 +122,7 @@ export const Dashboard = memo(() => {
               title={card.title}
               value={card.value}
               color={card.color}
+              onClick={card.title === "Users" ? handleUsersClick : undefined}
             />
           ))}
         </div>

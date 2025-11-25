@@ -256,45 +256,59 @@ export const UserProfile = memo(() => {
           </div>
 
           {/* Device Info Section */}
-          <div className="p-4 bg-white border-t">
+          <div className="p-4 bg-white border-t overflow-hidden">
             <h3 className="text-center text-gray-700 font-bold text-lg mb-3">
               Device Info
             </h3>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-gray-600 text-sm">Brand :</span>
-                <span className="text-gray-900 font-medium">
-                  {userProfile.deviceInfo.brand}
-                </span>
-              </div>
+            <div className="overflow-x-auto overflow-y-visible">
+              <div className="inline-block min-w-full">
+                <div className="space-y-2 min-w-[500px]">
+                  <div className="flex items-center justify-between py-2 border-b">
+                    <span className="text-gray-600 text-sm whitespace-nowrap mr-4">
+                      Brand :
+                    </span>
+                    <span className="text-gray-900 font-medium whitespace-nowrap">
+                      {userProfile.deviceInfo.brand}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-gray-600 text-sm">Model :</span>
-                <span className="text-gray-900 font-medium">
-                  {userProfile.deviceInfo.model}
-                </span>
-              </div>
+                  <div className="flex items-center justify-between py-2 border-b">
+                    <span className="text-gray-600 text-sm whitespace-nowrap mr-4">
+                      Model :
+                    </span>
+                    <span className="text-gray-900 font-medium whitespace-nowrap">
+                      {userProfile.deviceInfo.model}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-gray-600 text-sm">Device ID :</span>
-                <span className="text-gray-900 font-medium text-xs">
-                  {userProfile.deviceInfo.deviceId}
-                </span>
-              </div>
+                  <div className="flex items-center justify-between py-2 border-b">
+                    <span className="text-gray-600 text-sm whitespace-nowrap mr-4">
+                      Device ID :
+                    </span>
+                    <span className="text-gray-900 font-medium text-xs whitespace-nowrap">
+                      {userProfile.deviceInfo.deviceId}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-gray-600 text-sm">Login Time :</span>
-                <span className="text-gray-900 font-medium text-xs">
-                  {userProfile.deviceInfo.loginTime}
-                </span>
-              </div>
+                  <div className="flex items-center justify-between py-2 border-b">
+                    <span className="text-gray-600 text-sm whitespace-nowrap mr-4">
+                      Login Time :
+                    </span>
+                    <span className="text-gray-900 font-medium text-xs whitespace-nowrap">
+                      {userProfile.deviceInfo.loginTime}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-gray-600 text-sm">Device Status :</span>
-                <span className="inline-block px-3 py-1 bg-green-500 text-white rounded-full text-xs font-medium">
-                  {userProfile.deviceInfo.status}
-                </span>
+                  <div className="flex items-center justify-between py-2 border-b">
+                    <span className="text-gray-600 text-sm whitespace-nowrap mr-4">
+                      Device Status :
+                    </span>
+                    <span className="inline-block px-3 py-1 bg-green-500 text-white rounded-full text-xs font-medium whitespace-nowrap">
+                      {userProfile.deviceInfo.status}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
