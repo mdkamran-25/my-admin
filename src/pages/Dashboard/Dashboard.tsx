@@ -1,6 +1,7 @@
 // Dashboard page - main landing page
 
 import { memo, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/layout/Header";
 import { Sidebar } from "../../components/layout/Sidebar";
 import { StatCard } from "../../components/common/StatCard";
@@ -27,6 +28,7 @@ import {
  */
 export const Dashboard = memo(() => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const {
     stats: overviewStats,
@@ -42,7 +44,6 @@ export const Dashboard = memo(() => {
     refetch();
   }, [refetch]);
 
-  // Toggle sidebar
   const handleMenuClick = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);
   }, []);
@@ -50,6 +51,10 @@ export const Dashboard = memo(() => {
   const handleCloseSidebar = useCallback(() => {
     setIsSidebarOpen(false);
   }, []);
+
+  const handleWithdrawClick = useCallback(() => {
+    navigate("/withdraw-request");
+  }, [navigate]);
 
   // Loading State
   if (loading) {
@@ -94,12 +99,16 @@ export const Dashboard = memo(() => {
 
       <main className="max-w-7xl mx-auto px-2 py-6 flex flex-col gap-4">
         {/* Withdrawal Request Banner */}
-        <div className="bg-black text-white p-3 rounded-xl text-center shadow-lg">
+        <button
+          onClick={handleWithdrawClick}
+          className="bg-black text-white p-3 rounded-xl text-center shadow-lg hover:bg-gray-800 transition-colors w-full cursor-pointer active:scale-95"
+          type="button"
+        >
           <h2 className="text-lg font-light mb-1 opacity-95">
             Withdraw Request
           </h2>
           <p className="text-3xl font-bold">{overviewStats.withdrawRequests}</p>
-        </div>
+        </button>
 
         {/* Overview Stats Cards */}
         <div className="grid grid-cols-2 gap-3">
