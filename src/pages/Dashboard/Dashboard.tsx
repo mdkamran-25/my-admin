@@ -1,7 +1,8 @@
 // Dashboard page - main landing page
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { Header } from "../../components/layout/Header";
+import { Sidebar } from "../../components/layout/Sidebar";
 import { StatCard } from "../../components/common/StatCard";
 import { GameControl } from "../../components/dashboard/GameControl";
 import { StatsSection } from "../../components/dashboard/StatsSection";
@@ -25,6 +26,8 @@ import {
  * Displays overview stats, game controls, and play/win statistics
  */
 export const Dashboard = memo(() => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const {
     stats: overviewStats,
     playStats,
@@ -39,11 +42,21 @@ export const Dashboard = memo(() => {
     refetch();
   }, [refetch]);
 
+  // Toggle sidebar
+  const handleMenuClick = useCallback(() => {
+    setIsSidebarOpen((prev) => !prev);
+  }, []);
+
+  const handleCloseSidebar = useCallback(() => {
+    setIsSidebarOpen(false);
+  }, []);
+
   // Loading State
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-200">
-        <Header onRefresh={handleRefresh} />
+        <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+        <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
         <DashboardSkeleton />
       </div>
     );
@@ -53,7 +66,8 @@ export const Dashboard = memo(() => {
   if (error || !overviewStats) {
     return (
       <div className="min-h-screen bg-gray-200">
-        <Header onRefresh={handleRefresh} />
+        <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+        <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
         <ErrorState message={error || undefined} onRetry={handleRefresh} />
       </div>
     );
@@ -75,7 +89,8 @@ export const Dashboard = memo(() => {
   // Main Dashboard Content
   return (
     <div className="min-h-screen bg-gray-200">
-      <Header onRefresh={handleRefresh} />
+      <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+      <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
 
       <main className="max-w-7xl mx-auto px-2 py-6 flex flex-col gap-4">
         {/* Withdrawal Request Banner */}

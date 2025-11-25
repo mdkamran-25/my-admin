@@ -7,11 +7,12 @@ import { useCurrentDateTime } from "../../../hooks/useCurrentDateTime";
 
 interface HeaderProps {
   onRefresh?: () => void;
+  onMenuClick?: () => void;
 }
 
 const SPIN_DURATION = 2000; // milliseconds
 
-export const Header = memo(({ onRefresh }: HeaderProps) => {
+export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const { currentDate, currentTime } = useCurrentDateTime();
 
@@ -34,6 +35,7 @@ export const Header = memo(({ onRefresh }: HeaderProps) => {
           className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-purple-600 transition-colors"
           aria-label="Open menu"
           type="button"
+          onClick={onMenuClick}
         >
           <GiHamburgerMenu className="w-6 h-6" />
         </button>
