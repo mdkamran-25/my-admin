@@ -5,12 +5,17 @@ import { Header } from "../../components/layout/Header";
 import { StatCard } from "../../components/common/StatCard";
 import { GameControl } from "../../components/dashboard/GameControl";
 import { StatsSection } from "../../components/dashboard/StatsSection";
+import { GameStatsCard } from "../../components/dashboard/GameStatsCard";
 import { DashboardSkeleton } from "../../components/common/SkeletonLoaders";
 import { ErrorState } from "../../components/common/ErrorState";
 import { useDashboard } from "../../hooks/useDashboard";
 import {
   mapOverviewToStatCards,
   mapPlayStats,
+  mapProfitStats,
+  mapAddMoneyStats,
+  mapWithdrawMoneyStats,
+  mapRejectStats,
   mapWinStats,
   getDashboardDate,
 } from "../../utils/dashboardHelpers";
@@ -58,6 +63,13 @@ export const Dashboard = memo(() => {
   const statCards = mapOverviewToStatCards(overviewStats);
   const playStatsArray = mapPlayStats(playStats);
   const winStatsArray = mapWinStats(winStats);
+  const profitStatsArray = mapProfitStats(playStats, winStats);
+  const profitTotal = (playStats?.totalPlay || 0) - (winStats?.totalWin || 0);
+  const addMoneyStatsArray = mapAddMoneyStats(overviewStats?.addMoney);
+  const withdrawMoneyStatsArray = mapWithdrawMoneyStats(
+    overviewStats?.withdrawMoney
+  );
+  const rejectStatsArray = mapRejectStats(overviewStats?.rejectRequests);
   const dashboardDate = getDashboardDate(overviewStats.currentDate);
 
   // Main Dashboard Content
@@ -100,11 +112,58 @@ export const Dashboard = memo(() => {
         />
 
         {/* Win Statistics Section */}
-        <StatsSection
-          title="Win"
-          stats={winStatsArray}
-          total={winStats?.totalWin || 0}
-        />
+        <div>
+          <GameStatsCard
+            title="Win"
+            variant="win"
+            stats={winStatsArray}
+            totalLabel="Total Win"
+            totalValue={winStats?.totalWin || 0}
+          />
+        </div>
+
+        {/* Profit - Loss */}
+        <div>
+          <GameStatsCard
+            title="Profit - Loss"
+            variant="profit"
+            stats={profitStatsArray}
+            totalLabel="total Profit"
+            totalValue={profitTotal}
+          />
+        </div>
+
+        {/* Total Add Money */}
+        <div>
+          <GameStatsCard
+            title="Total Add Money"
+            variant="add"
+            stats={addMoneyStatsArray}
+            totalLabel="Total"
+            totalValue={overviewStats.addMoney?.total || 0}
+          />
+        </div>
+
+        {/* Total Withdraw Money */}
+        <div>
+          <GameStatsCard
+            title="Total Withdraw Money"
+            variant="withdraw"
+            stats={withdrawMoneyStatsArray}
+            totalLabel="Total"
+            totalValue={overviewStats.withdrawMoney?.total || 0}
+          />
+        </div>
+
+        {/* Reject Money Request */}
+        <div>
+          <GameStatsCard
+            title="Reject Money Request"
+            variant="reject"
+            stats={rejectStatsArray}
+            totalLabel=""
+          />
+        </div>
       </main>
     </div>
   );

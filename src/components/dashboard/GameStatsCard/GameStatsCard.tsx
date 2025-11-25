@@ -8,12 +8,16 @@ interface GameStatsCardProps {
   }[];
   totalLabel?: string;
   totalValue?: number;
-  variant?: "play" | "win";
+  variant?: "play" | "win" | "profit" | "add" | "withdraw" | "reject";
 }
 
-const variantClasses = {
-  play: "from-green-700 to-green-600",
-  win: "from-red-600 to-orange-500",
+const variantClasses: Record<string, string> = {
+  play: "bg-gradient-to-br from-green-700 to-green-600 text-white",
+  win: "bg-gradient-to-br from-red-600 to-orange-500 text-white",
+  profit: "bg-white text-green-700 border-2 border-gray-200",
+  add: "bg-gradient-to-br from-blue-700 to-blue-600 text-white",
+  withdraw: "bg-gradient-to-br from-red-700 to-red-600 text-white",
+  reject: "bg-gradient-to-br from-cyan-400 to-teal-300 text-white",
 };
 
 export const GameStatsCard = ({
@@ -23,10 +27,10 @@ export const GameStatsCard = ({
   totalValue,
   variant = "play",
 }: GameStatsCardProps) => {
+  const classes = variantClasses[variant] || variantClasses.play;
+
   return (
-    <div
-      className={`rounded-xl p-6 bg-linear-to-br ${variantClasses[variant]} text-white shadow-lg`}
-    >
+    <div className={`rounded-xl p-6 ${classes} shadow-lg`}>
       <h2 className="text-2xl font-bold text-center mb-6 pb-4 border-b-2 border-white/30">
         {title}
       </h2>

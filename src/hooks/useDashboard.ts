@@ -27,6 +27,24 @@ export const useDashboard = () => {
         walletAmount: 717290.5,
         gameStatus: "Active",
         currentDate: getCurrentDate(),
+        addMoney: {
+          upi: 0,
+          gateway: 9957,
+          gatewayDetails: { Imb: 0, Pride: 0 },
+          manually: 0,
+          total: 9957,
+        },
+        withdrawMoney: {
+          request: 0,
+          normal: 0,
+          pending: 0,
+          manually: 48075,
+          total: 48075,
+        },
+        rejectRequests: {
+          addMoneyReject: 0,
+          withdrawMoneyReject: 0,
+        },
       });
 
       setPlayStats({
