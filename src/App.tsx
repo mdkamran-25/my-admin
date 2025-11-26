@@ -13,6 +13,20 @@ import { AddGame } from "./pages/AddGame";
 import { GameCancel } from "./pages/GameCancel";
 import { FundingPlayer } from "./pages/FundingPlayer";
 import { ActivityLogs } from "./pages/ActivityLogs";
+import {
+  ProfileSettings,
+  GameOnOff,
+  GameOnOffStarline,
+  RulesSet,
+  BlockUpi,
+  UpiAR,
+  NoticeBoard,
+  PersonalNoticeBoard,
+  VideoSettings,
+  BlockDeviceList,
+  GameRate,
+  AllResult,
+} from "./pages/Settings";
 
 function App() {
   return (
@@ -38,6 +52,29 @@ function App() {
         <Route path="/game-cancel" element={<GameCancel />} />
         <Route path="/funting-player" element={<FundingPlayer />} />
         <Route path="/activity-logs" element={<ActivityLogs />} />
+
+        {/* Settings Routes */}
+        <Route path="/settings/profile" element={<ProfileSettings />} />
+        <Route path="/settings/game-on-off" element={<GameOnOff />} />
+        <Route
+          path="/settings/game-on-off-starline"
+          element={<GameOnOffStarline />}
+        />
+        <Route path="/settings/rules-set" element={<RulesSet />} />
+        <Route path="/settings/block-upi" element={<BlockUpi />} />
+        <Route path="/settings/upi-ar" element={<UpiAR />} />
+        <Route path="/settings/notice-board" element={<NoticeBoard />} />
+        <Route
+          path="/settings/personal-notice-board"
+          element={<PersonalNoticeBoard />}
+        />
+        <Route path="/settings/video" element={<VideoSettings />} />
+        <Route
+          path="/settings/block-device-list"
+          element={<BlockDeviceList />}
+        />
+        <Route path="/settings/game-rate" element={<GameRate />} />
+        <Route path="/settings/all-result" element={<AllResult />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,12 @@
+export { ProfileSettings } from "./ProfileSettings";
+export { GameOnOff } from "./GameOnOff";
+export { GameOnOffStarline } from "./GameOnOffStarline";
+export { RulesSet } from "./RulesSet";
+export { BlockUpi } from "./BlockUpi";
+export { UpiAR } from "./UpiAR";
+export { NoticeBoard } from "./NoticeBoard";
+export { PersonalNoticeBoard } from "./PersonalNoticeBoard";
+export { VideoSettings } from "./VideoSettings";
+export { BlockDeviceList } from "./BlockDeviceList";
+export { GameRate } from "./GameRate";
+export { AllResult } from "./AllResult";
