@@ -6,6 +6,7 @@ import { UserList } from "./pages/UserList";
 import { ProfitLoose } from "./pages/ProfitLoose";
 import { ResultReport } from "./pages/ResultReport";
 import { ReportGeneration } from "./pages/ReportGeneration";
+import { WinHistory } from "./pages/WinHistory";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/profit-loose" element={<ProfitLoose />} />
         <Route path="/result-report" element={<ResultReport />} />
         <Route path="/report-generation" element={<ReportGeneration />} />
+        <Route path="/win-history" element={<WinHistory />} />
       </Routes>
     </BrowserRouter>
   );

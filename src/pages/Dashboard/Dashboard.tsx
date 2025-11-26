@@ -1,9 +1,8 @@
 // Dashboard page - main landing page
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "../../components/layout/Header";
-import { Sidebar } from "../../components/layout/Sidebar";
+import { Layout } from "../../components/layout/Layout";
 import { StatCard } from "../../components/common/StatCard";
 import { GameControl } from "../../components/dashboard/GameControl";
 import { StatsSection } from "../../components/dashboard/StatsSection";
@@ -27,7 +26,6 @@ import {
  * Displays overview stats, game controls, and play/win statistics
  */
 export const Dashboard = memo(() => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -44,14 +42,6 @@ export const Dashboard = memo(() => {
     refetch();
   }, [refetch]);
 
-  const handleMenuClick = useCallback(() => {
-    setIsSidebarOpen((prev) => !prev);
-  }, []);
-
-  const handleCloseSidebar = useCallback(() => {
-    setIsSidebarOpen(false);
-  }, []);
-
   const handleWithdrawClick = useCallback(() => {
     navigate("/withdraw-request");
   }, [navigate]);
@@ -63,22 +53,26 @@ export const Dashboard = memo(() => {
   // Loading State
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-200">
-        <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
-        <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
+      <Layout
+        onRefresh={handleRefresh}
+        bgColor="bg-gray-200"
+        contentPadding="px-2 py-6"
+      >
         <DashboardSkeleton />
-      </div>
+      </Layout>
     );
   }
 
   // Error State
   if (error || !overviewStats) {
     return (
-      <div className="min-h-screen bg-gray-200">
-        <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
-        <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
+      <Layout
+        onRefresh={handleRefresh}
+        bgColor="bg-gray-200"
+        contentPadding="px-2 py-6"
+      >
         <ErrorState message={error || undefined} onRetry={handleRefresh} />
-      </div>
+      </Layout>
     );
   }
 
@@ -97,11 +91,12 @@ export const Dashboard = memo(() => {
 
   // Main Dashboard Content
   return (
-    <div className="min-h-screen bg-gray-200">
-      <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
-      <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
-
-      <main className="max-w-7xl mx-auto px-2 py-6 flex flex-col gap-4">
+    <Layout
+      onRefresh={handleRefresh}
+      bgColor="bg-gray-200"
+      contentPadding="px-2 py-6"
+    >
+      <div className="flex flex-col gap-4">
         {/* Withdrawal Request Banner */}
         <button
           onClick={handleWithdrawClick}
@@ -193,8 +188,8 @@ export const Dashboard = memo(() => {
             totalLabel=""
           />
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 });
 

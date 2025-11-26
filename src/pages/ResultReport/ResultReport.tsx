@@ -1,8 +1,7 @@
 // Result & Report Page - displays game results
 
 import { memo, useState, useCallback } from "react";
-import { Header } from "../../components/layout/Header";
-import { Sidebar } from "../../components/layout/Sidebar";
+import { Layout } from "../../components/layout/Layout";
 
 interface GameResult {
   id: string;
@@ -15,7 +14,6 @@ interface GameResult {
 }
 
 export const ResultReport = memo(() => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("2025-11-25");
   const [expandedGameId, setExpandedGameId] = useState<string | null>(null);
 
@@ -95,18 +93,6 @@ export const ResultReport = memo(() => {
     },
   ];
 
-  const handleMenuClick = useCallback(() => {
-    setIsSidebarOpen((prev) => !prev);
-  }, []);
-
-  const handleCloseSidebar = useCallback(() => {
-    setIsSidebarOpen(false);
-  }, []);
-
-  const handleRefresh = useCallback(() => {
-    console.log("Refreshing result report data...");
-  }, []);
-
   const handleGameClick = useCallback((gameId: string) => {
     setExpandedGameId((prev) => (prev === gameId ? null : gameId));
   }, []);
@@ -124,103 +110,98 @@ export const ResultReport = memo(() => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
-      <Header onRefresh={handleRefresh} onMenuClick={handleMenuClick} />
+    <Layout>
+      {/* Date Filter */}
+      <div className="mb-4">
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+        />
+      </div>
 
-      <main className="max-w-7xl mx-auto px-3 py-4">
-        {/* Date Filter */}
-        <div className="mb-4">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-          />
-        </div>
-
-        {/* Games List */}
-        <div className="space-y-3">
-          {games.map((game) => {
-            const isExpanded = expandedGameId === game.id;
-            return (
-              <div
-                key={game.id}
-                className="overflow-hidden rounded-2xl shadow-lg"
+      {/* Games List */}
+      <div className="space-y-3">
+        {games.map((game) => {
+          const isExpanded = expandedGameId === game.id;
+          return (
+            <div
+              key={game.id}
+              className="overflow-hidden rounded-2xl shadow-lg"
+            >
+              {/* Game Header - Clickable */}
+              <button
+                onClick={() => handleGameClick(game.id)}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 rounded-t-2xl p-5 transition-all active:scale-98"
               >
-                {/* Game Header - Clickable */}
-                <button
-                  onClick={() => handleGameClick(game.id)}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 rounded-t-2xl p-5 transition-all active:scale-98"
-                >
-                  <h3 className="text-gray-800 text-xl font-bold mb-1">
-                    {game.name}
-                  </h3>
-                  <p className="text-gray-700 text-base font-semibold">
-                    {game.date}
-                  </p>
-                </button>
+                <h3 className="text-gray-800 text-xl font-bold mb-1">
+                  {game.name}
+                </h3>
+                <p className="text-gray-700 text-base font-semibold">
+                  {game.date}
+                </p>
+              </button>
 
-                {/* Expanded Details */}
-                {isExpanded && (
-                  <div className="bg-white">
-                    {/* Open/Close Header */}
-                    <div className="grid grid-cols-2 bg-gray-700 text-white text-center font-semibold py-2">
-                      <div>Open</div>
-                      <div>Close</div>
+              {/* Expanded Details */}
+              {isExpanded && (
+                <div className="bg-white">
+                  {/* Open/Close Header */}
+                  <div className="grid grid-cols-2 bg-gray-700 text-white text-center font-semibold py-2">
+                    <div>Open</div>
+                    <div>Close</div>
+                  </div>
+
+                  {/* Times and Results */}
+                  <div className="grid grid-cols-2 divide-x divide-gray-200">
+                    {/* Open Section */}
+                    <div className="p-4 text-center">
+                      <p className="text-gray-800 text-lg font-semibold mb-3">
+                        {game.openTime}
+                      </p>
+                      <button className="px-6 py-2 bg-blue-500 text-white rounded-full text-base font-semibold mb-3">
+                        {game.openResult}
+                      </button>
+                      <button
+                        onClick={() => handleBidReverse(game.name)}
+                        className="w-full px-4 py-2 bg-pink-500 text-white rounded-full text-sm font-semibold hover:bg-pink-600"
+                      >
+                        Bid Reverse
+                      </button>
                     </div>
 
-                    {/* Times and Results */}
-                    <div className="grid grid-cols-2 divide-x divide-gray-200">
-                      {/* Open Section */}
-                      <div className="p-4 text-center">
-                        <p className="text-gray-800 text-lg font-semibold mb-3">
-                          {game.openTime}
-                        </p>
+                    {/* Close Section */}
+                    <div className="p-4 text-center">
+                      <p className="text-gray-800 text-lg font-semibold mb-3">
+                        {game.closeTime}
+                      </p>
+                      {game.closeResult ? (
                         <button className="px-6 py-2 bg-blue-500 text-white rounded-full text-base font-semibold mb-3">
-                          {game.openResult}
+                          {game.closeResult}
                         </button>
+                      ) : (
                         <button
-                          onClick={() => handleBidReverse(game.name)}
-                          className="w-full px-4 py-2 bg-pink-500 text-white rounded-full text-sm font-semibold hover:bg-pink-600"
+                          onClick={() => handleAddCloseResult(game.name)}
+                          className="w-full px-4 py-2 bg-cyan-500 text-white rounded-full text-sm font-semibold mb-3 hover:bg-cyan-600"
                         >
-                          Bid Reverse
+                          Add Close Result
                         </button>
-                      </div>
-
-                      {/* Close Section */}
-                      <div className="p-4 text-center">
-                        <p className="text-gray-800 text-lg font-semibold mb-3">
-                          {game.closeTime}
-                        </p>
-                        {game.closeResult ? (
-                          <button className="px-6 py-2 bg-blue-500 text-white rounded-full text-base font-semibold mb-3">
-                            {game.closeResult}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleAddCloseResult(game.name)}
-                            className="w-full px-4 py-2 bg-cyan-500 text-white rounded-full text-sm font-semibold mb-3 hover:bg-cyan-600"
-                          >
-                            Add Close Result
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleCloseReport(game.name)}
-                          className="w-full px-4 py-2 bg-green-500 text-white rounded-full text-sm font-semibold hover:bg-green-600"
-                        >
-                          Close Report
-                        </button>
-                      </div>
+                      )}
+                      <button
+                        onClick={() => handleCloseReport(game.name)}
+                        className="w-full px-4 py-2 bg-green-500 text-white rounded-full text-sm font-semibold hover:bg-green-600"
+                      >
+                        Close Report
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </main>
-    </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </Layout>
   );
 });
 
