@@ -1,6 +1,7 @@
 // Sidebar navigation component
 
 import { memo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MdDashboard,
   MdList,
@@ -54,6 +55,8 @@ const menuItems = [
 ];
 
 export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
+  const navigate = useNavigate();
+
   return (
     <>
       {/* Sidebar */}
@@ -72,8 +75,7 @@ export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
                 <li key={index}>
                   <button
                     onClick={() => {
-                      // Handle navigation here
-                      console.log(`Navigate to ${item.path}`);
+                      navigate(item.path);
                       onClose();
                     }}
                     className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-left"
