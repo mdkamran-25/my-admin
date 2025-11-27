@@ -2,6 +2,7 @@
 
 export interface DashboardStats {
   withdrawRequests: number;
+  depositRequests?: number;
   totalUsers: number;
   walletAmount: number;
   gameStatus: "Active" | "Inactive";

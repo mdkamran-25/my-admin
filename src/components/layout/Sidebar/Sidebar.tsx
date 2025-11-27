@@ -15,6 +15,7 @@ import {
   MdSettings,
   MdHistory,
   MdLogout,
+  MdAccountBalanceWallet,
 } from "react-icons/md";
 import { SettingsModal } from "../../common/SettingsModal";
 
@@ -26,6 +27,11 @@ interface SidebarProps {
 const menuItems = [
   { icon: MdDashboard, label: "Dashboard", path: "/" },
   { icon: MdList, label: "User List", path: "/users" },
+  {
+    icon: MdAccountBalanceWallet,
+    label: "Withdraw History",
+    path: "/withdraw-history",
+  },
   { icon: MdBookmark, label: "Profit Loose", path: "/profit-loose" },
   { icon: MdBarChart, label: "Result & Report", path: "/result-report" },
   {

@@ -23,6 +23,7 @@ export const useDashboard = () => {
       // For now, using mock data until backend is ready
       setStats({
         withdrawRequests: 16,
+        depositRequests: 24,
         totalUsers: 18917,
         walletAmount: 717290.5,
         gameStatus: "Active",

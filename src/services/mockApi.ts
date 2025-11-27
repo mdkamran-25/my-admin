@@ -3,6 +3,7 @@
 import {
   mockUsers,
   mockWithdrawRequests,
+  mockDepositRequests,
   mockGamePlays,
   mockActivityLogs,
   getUserById,
@@ -11,6 +12,7 @@ import {
   getUserActivityLogs,
   type MockUser,
   type MockWithdrawRequest,
+  type MockDepositRequest,
   type MockGamePlay,
   type MockActivityLog,
 } from "./mockData";
@@ -202,6 +204,66 @@ export const withdrawalApi = {
     }
 
     return { success: false, error: "Withdrawal request not found" };
+  },
+};
+
+// Deposit API
+export const depositApi = {
+  // Get all deposit requests
+  getDeposits: async (
+    page: number = 1,
+    limit: number = 10
+  ): Promise<PaginatedResponse<MockDepositRequest>> => {
+    await delay();
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const paginatedData = mockDepositRequests.slice(start, end);
+
+    return {
+      success: true,
+      data: paginatedData,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(mockDepositRequests.length / limit),
+        itemsPerPage: limit,
+        totalItems: mockDepositRequests.length,
+      },
+    };
+  },
+
+  // Get deposit by ID
+  getDepositById: async (
+    id: string
+  ): Promise<ApiResponse<MockDepositRequest>> => {
+    await delay(300);
+
+    const deposit = mockDepositRequests.find((d) => d.id === id);
+    if (deposit) {
+      return { success: true, data: deposit };
+    }
+
+    return { success: false, error: "Deposit request not found" };
+  },
+
+  // Update deposit status
+  updateDepositStatus: async (
+    id: string,
+    status: "Pending" | "Approved" | "Rejected"
+  ): Promise<ApiResponse<MockDepositRequest>> => {
+    await delay(600);
+
+    const deposit = mockDepositRequests.find((d) => d.id === id);
+    if (deposit) {
+      const updated = { ...deposit, status };
+      return {
+        success: true,
+        data: updated,
+        message: `Deposit ${status.toLowerCase()}`,
+      };
+    }
+
+    return { success: false, error: "Deposit request not found" };
   },
 };
 

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Dashboard } from "./pages/Dashboard";
 import { WithdrawRequest } from "./pages/WithdrawRequest";
+import { WithdrawHistory } from "./pages/WithdrawHistory";
+import { DepositRequest } from "./pages/DepositRequest";
 import { UserProfile } from "./pages/UserProfile";
 import { UserList } from "./pages/UserList";
 import { WalletDetails } from "./pages/WalletDetails";
@@ -38,6 +40,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/withdraw-request" element={<WithdrawRequest />} />
+        <Route path="/withdraw-history" element={<WithdrawHistory />} />
+        <Route path="/deposit-request" element={<DepositRequest />} />
         <Route path="/user-profile/:userId" element={<UserProfile />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/wallet-details" element={<WalletDetails />} />

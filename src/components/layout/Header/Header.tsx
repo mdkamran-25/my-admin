@@ -1,6 +1,7 @@
 // Header component with app name and refresh button
 
 import { memo, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSyncAlt } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useCurrentDateTime } from "../../../hooks/useCurrentDateTime";
@@ -13,6 +14,7 @@ interface HeaderProps {
 const SPIN_DURATION = 2000; // milliseconds
 
 export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
+  const navigate = useNavigate();
   const [isSpinning, setIsSpinning] = useState(false);
   const { currentDate, currentTime } = useCurrentDateTime();
 
@@ -39,7 +41,13 @@ export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
         >
           <GiHamburgerMenu className="w-6 h-6" />
         </button>
-        <h1 className="text-2xl font-light text-gray-900">A23 Admin</h1>
+        <button
+          onClick={() => navigate("/")}
+          className="text-2xl font-light text-gray-900 hover:text-purple-600 transition-colors cursor-pointer"
+          type="button"
+        >
+          A23 Admin
+        </button>
       </div>
 
       {/* Right Section */}

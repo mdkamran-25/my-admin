@@ -37,6 +37,21 @@ export interface MockWithdrawRequest {
   upiId?: string;
 }
 
+export interface MockDepositRequest {
+  id: string;
+  userId: string;
+  phone: string;
+  name: string;
+  username: string;
+  amount: number;
+  wallet: number;
+  requestDate: string;
+  status: "Pending" | "Approved" | "Rejected";
+  paymentMethod: "upi" | "bank" | "card";
+  transactionId: string;
+  upiId?: string;
+}
+
 export interface MockGamePlay {
   id: string;
   userId: string;
@@ -1032,6 +1047,59 @@ const generateWithdrawRequests = (): MockWithdrawRequest[] => {
 
 export const mockWithdrawRequests: MockWithdrawRequest[] =
   generateWithdrawRequests();
+
+// Generate deposit requests
+const generateDepositRequests = (): MockDepositRequest[] => {
+  const requests: MockDepositRequest[] = [];
+  const statuses: ("Pending" | "Approved" | "Rejected")[] = [
+    "Pending",
+    "Approved",
+    "Rejected",
+  ];
+  const paymentMethods: ("upi" | "bank" | "card")[] = ["upi", "bank", "card"];
+  const dates = [
+    "22/11/2025 10:30 AM",
+    "23/11/2025 02:15 PM",
+    "24/11/2025 09:45 AM",
+    "25/11/2025 04:20 PM",
+    "26/11/2025 11:00 AM",
+    "27/11/2025 03:30 PM",
+  ];
+
+  mockUsers.slice(0, 40).forEach((user, index) => {
+    const numRequests = Math.floor(Math.random() * 3) + 1;
+
+    for (let i = 0; i < numRequests; i++) {
+      const paymentMethod =
+        paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
+      requests.push({
+        id: `dep-${user.id}-${i}`,
+        userId: user.id,
+        phone: user.phone,
+        name: user.name,
+        username: user.username,
+        amount: [100, 200, 500, 1000, 2000, 5000][
+          Math.floor(Math.random() * 6)
+        ],
+        wallet: user.wallet,
+        requestDate: dates[Math.floor(Math.random() * dates.length)],
+        status:
+          index < 15 ? "Pending" : statuses[Math.floor(Math.random() * 3)],
+        paymentMethod,
+        transactionId: `TXN${Date.now()}${Math.random()
+          .toString(36)
+          .substr(2, 9)
+          .toUpperCase()}`,
+        upiId: paymentMethod === "upi" ? `${user.username}@upi` : undefined,
+      });
+    }
+  });
+
+  return requests;
+};
+
+export const mockDepositRequests: MockDepositRequest[] =
+  generateDepositRequests();
 
 // Generate game plays
 const generateGamePlays = (): MockGamePlay[] => {
