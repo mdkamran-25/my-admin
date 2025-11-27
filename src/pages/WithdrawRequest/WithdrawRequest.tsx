@@ -487,6 +487,25 @@ export const WithdrawRequest = memo(() => {
     showToastNotification(`Calling ${phone}...`);
   };
 
+  // Handle WhatsApp Button - Opens WhatsApp chat
+  const handleWhatsApp = (phone: string, name: string) => {
+    // Remove any non-digit characters and ensure country code
+    const cleanPhone = phone.replace(/\D/g, "");
+    // If phone doesn't start with country code, assume India (+91)
+    const whatsappNumber = cleanPhone.startsWith("91")
+      ? cleanPhone
+      : `91${cleanPhone}`;
+
+    // Optional: Pre-fill message
+    const message = encodeURIComponent(
+      `Hello ${name}, regarding your withdrawal request...`
+    );
+
+    // Open WhatsApp (works on both mobile and desktop)
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
+    showToastNotification(`Opening WhatsApp for ${name}...`);
+  };
+
   // Handle Copy All - Copies all user details to clipboard
   const handleCopyAll = (request: WithdrawRequestDetails) => {
     const details = `WITHDRAWAL REQUEST DETAILS
@@ -850,7 +869,11 @@ IFSC Code: ${request.ifsc}
                     Accepted
                   </button>
 
-                  <button className="w-12 h-10 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center">
+                  <button
+                    onClick={() => handleWhatsApp(request.phone, request.name)}
+                    className="w-12 h-10 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center"
+                    title="Send WhatsApp message"
+                  >
                     <FaWhatsapp className="w-6 h-6" />
                   </button>
 
