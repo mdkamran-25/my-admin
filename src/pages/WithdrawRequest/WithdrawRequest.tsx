@@ -28,10 +28,12 @@ export const WithdrawRequest = memo(() => {
   const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [note, setNote] = useState("");
+  const [notes, setNotes] = useState<{ [key: string]: string }>({});
   const [filteredRequests, setFilteredRequests] = useState<
     WithdrawRequestDetails[]
   >([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   // Mock data - replace with API call
   const requests: WithdrawRequestDetails[] = [
@@ -464,6 +466,109 @@ export const WithdrawRequest = memo(() => {
     handleFilter();
   }, [dateFilter, statusFilter, searchQuery]);
 
+  // Load saved notes from localStorage on mount
+  useEffect(() => {
+    const savedNotes = localStorage.getItem("withdrawRequestNotes");
+    if (savedNotes) {
+      setNotes(JSON.parse(savedNotes));
+    }
+  }, []);
+
+  // Show toast notification
+  const showToastNotification = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  // Handle Call Button - Opens phone dialer
+  const handleCall = (phone: string) => {
+    window.location.href = `tel:${phone}`;
+    showToastNotification(`Calling ${phone}...`);
+  };
+
+  // Handle Copy All - Copies all user details to clipboard
+  const handleCopyAll = (request: WithdrawRequestDetails) => {
+    const details = `WITHDRAWAL REQUEST DETAILS
+========================
+
+User Information:
+Name: ${request.name}
+Username: ${request.username}
+Phone: ${request.phone}
+
+Transaction Details:
+Amount: ${request.amount}
+Wallet: ${request.wallet}
+Request Date: ${request.requestDate}
+Status: ${request.status}
+Type: ${request.type}
+
+Bank Details:
+Account Name: ${request.accountName}
+Bank Name: ${request.bankName}
+Account Number: ${request.accountNumber}
+IFSC Code: ${request.ifsc}
+
+========================`;
+
+    // Try modern clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(details)
+        .then(() => {
+          showToastNotification("✅ Details copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Clipboard API error:", err);
+          fallbackCopy(details);
+        });
+    } else {
+      // Fallback for browsers that don't support clipboard API
+      fallbackCopy(details);
+    }
+  };
+
+  // Fallback copy method using textarea
+  const fallbackCopy = (text: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        showToastNotification("✅ Details copied to clipboard!");
+      } else {
+        showToastNotification("❌ Failed to copy details");
+      }
+    } catch (err) {
+      console.error("Fallback copy error:", err);
+      showToastNotification("❌ Failed to copy details");
+    }
+  };
+
+  // Handle Save Note - Saves note to localStorage
+  const handleSaveNote = (requestId: string) => {
+    const noteText = notes[requestId] || "";
+    if (!noteText.trim()) {
+      showToastNotification("⚠️ Please enter a note first");
+      return;
+    }
+
+    const updatedNotes = { ...notes, [requestId]: noteText };
+    setNotes(updatedNotes);
+    localStorage.setItem("withdrawRequestNotes", JSON.stringify(updatedNotes));
+    showToastNotification("✅ Note saved successfully!");
+  };
+
   const totalAmount = filteredRequests.reduce(
     (sum, req) => sum + req.amount,
     0
@@ -609,8 +714,11 @@ export const WithdrawRequest = memo(() => {
                   <button className="px-4 py-1.5 bg-cyan-500 text-white rounded-full text-sm font-medium hover:bg-cyan-600">
                     Transaction
                   </button>
-                  <button className="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm font-medium hover:bg-blue-600">
-                    Call
+                  <button
+                    onClick={() => handleCall(request.phone)}
+                    className="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm font-medium hover:bg-blue-600 flex items-center gap-1"
+                  >
+                    📞 Call
                   </button>
                   <button className="px-4 py-1.5 bg-green-500 text-white rounded-full text-sm font-medium hover:bg-green-600">
                     QR Msg
@@ -623,8 +731,11 @@ export const WithdrawRequest = memo(() => {
                   </button>
                 </div>
 
-                <button className="px-4 py-1.5 bg-cyan-400 text-white rounded-full text-sm font-medium hover:bg-cyan-500">
-                  Copy All
+                <button
+                  onClick={() => handleCopyAll(request)}
+                  className="px-4 py-1.5 bg-cyan-400 text-white rounded-full text-sm font-medium hover:bg-cyan-500 flex items-center gap-1"
+                >
+                  📋 Copy All
                 </button>
 
                 {/* Details Grid */}
@@ -706,14 +817,24 @@ export const WithdrawRequest = memo(() => {
                 {/* Note Section */}
                 <div className="mt-4">
                   <textarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="Add a note..."
+                    value={notes[request.id] || ""}
+                    onChange={(e) =>
+                      setNotes({ ...notes, [request.id]: e.target.value })
+                    }
+                    placeholder="Add a note for this request..."
                     className="w-full p-3 rounded-lg bg-white text-gray-800 text-sm min-h-24 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                   />
-                  <button className="w-full mt-2 py-2.5 bg-cyan-400 text-white rounded-lg font-semibold hover:bg-cyan-500">
-                    Save Note
+                  <button
+                    onClick={() => handleSaveNote(request.id)}
+                    className="w-full mt-2 py-2.5 bg-cyan-400 text-white rounded-lg font-semibold hover:bg-cyan-500 flex items-center justify-center gap-2"
+                  >
+                    💾 Save Note
                   </button>
+                  {notes[request.id] && (
+                    <p className="text-xs text-cyan-300 mt-2 text-center">
+                      ✓ Note saved in browser
+                    </p>
+                  )}
                 </div>
 
                 {/* Final Action Buttons */}
@@ -763,6 +884,15 @@ export const WithdrawRequest = memo(() => {
           </div>
         ))}
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+          <div className="bg-gray-900 text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-2">
+            <span className="text-sm font-medium">{toastMessage}</span>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 });
