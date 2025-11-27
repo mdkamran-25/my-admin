@@ -38,3 +38,33 @@ body {
 .animate-slide-in-right {
   animation: slide-in-right 0.3s ease-out forwards;
 }
+
+/* Optimized shimmer animation for skeleton loaders */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-skeleton-shimmer {
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    #f3f3f3 0%,
+    #e5e5e5 50%,
+    #f3f3f3 100%
+  );
+  background-size: 200% 100%;
+  background-attachment: fixed;
+}
+
+/* Accessible animation - respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-skeleton-shimmer {
+    animation: none;
+    background: #f3f3f3;
+  }
+}

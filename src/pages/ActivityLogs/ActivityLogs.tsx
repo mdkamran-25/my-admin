@@ -1,12 +1,13 @@
 // User Activity Log Page - displays user activity history with filters
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { FilterBar } from "../../components/common/FilterBar";
 import { ExportButtons } from "../../components/common/ExportButtons";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
+import { ActivityCardSkeleton } from "../../components/common/SkeletonLoaders";
 import { activityApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockActivityLog } from "../../services/mockData";
@@ -23,11 +24,7 @@ export const ActivityLogs = memo(() => {
     search: "",
   });
 
-  useEffect(() => {
-    fetchActivityLogs();
-  }, [currentPage, pageSize, filters]);
-
-  const fetchActivityLogs = async () => {
+  const fetchActivityLogs = useCallback(async () => {
     setLoading(true);
     try {
       const response = await activityApi.getActivityLogs(currentPage, pageSize);
@@ -40,7 +37,11 @@ export const ActivityLogs = memo(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    fetchActivityLogs();
+  }, [fetchActivityLogs, filters]);
 
   const handleFilterChange = (value: string) => {
     setFilters((prev) => ({ ...prev, activityType: value }));
@@ -77,8 +78,17 @@ export const ActivityLogs = memo(() => {
     return colors[index % colors.length];
   };
 
+  const handleRefresh = useCallback(() => {
+    setCurrentPage(1);
+    setFilters({
+      date: "",
+      activityType: "",
+      search: "",
+    });
+  }, []);
+
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Title */}
@@ -112,22 +122,7 @@ export const ActivityLogs = memo(() => {
       />
 
       {/* Loading State */}
-      {loading && (
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="bg-white shadow-lg p-4 animate-pulse">
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-32"></div>
-              </div>
-              <div className="space-y-2">
-                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {loading && <ActivityCardSkeleton count={5} />}
 
       {/* Empty State */}
       {!loading && activityLogs.length === 0 && (

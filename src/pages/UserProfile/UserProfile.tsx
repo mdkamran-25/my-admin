@@ -1,10 +1,11 @@
 // User Profile Page - displays detailed user information
 
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { ErrorState } from "../../components/common/ErrorState";
+import { ProfileDetailSkeleton } from "../../components/common/SkeletonLoaders";
 import { userApi } from "../../services/mockApi";
 import { useGlobalStore } from "../../store/useGlobalStore";
 import type { MockUser } from "../../services/mockData";
@@ -18,11 +19,7 @@ export const UserProfile = memo(() => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, [userId]);
-
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -42,28 +39,22 @@ export const UserProfile = memo(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, addToast]);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+  const handleRefresh = useCallback(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
 
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Loading State */}
-      {loading && (
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-20 w-20 bg-gray-200 rounded-full mx-auto"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-            <div className="space-y-3 mt-6">
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        </div>
-      )}
+      {loading && <ProfileDetailSkeleton />}
 
       {/* Error State */}
       {error && !loading && (

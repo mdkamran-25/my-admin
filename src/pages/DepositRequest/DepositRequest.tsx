@@ -1,6 +1,6 @@
 // Deposit Request Page - displays list of deposit requests
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
@@ -8,6 +8,7 @@ import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
+import { RequestCardSkeleton } from "../../components/common/SkeletonLoaders";
 import { depositApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockDepositRequest } from "../../services/mockData";
@@ -36,7 +37,7 @@ export const DepositRequest = memo(() => {
   }, []);
 
   // Fetch deposit requests
-  const fetchDeposits = async () => {
+  const fetchDeposits = useCallback(async () => {
     setLoading(true);
     try {
       const response = await depositApi.getDeposits(currentPage, pageSize);
@@ -48,11 +49,11 @@ export const DepositRequest = memo(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, pageSize]);
 
   useEffect(() => {
     fetchDeposits();
-  }, [currentPage]);
+  }, [fetchDeposits]);
 
   // Apply filters
   const filteredRequests = requests.filter((req) => {
@@ -203,6 +204,10 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
     showToastNotification("✅ Exported to CSV");
   };
 
+  const handleRefresh = useCallback(() => {
+    setCurrentPage(1);
+  }, []);
+
   const handleExportPDF = () => {
     const columns = [
       { header: "Phone", dataKey: "phone" },
@@ -232,7 +237,7 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
   };
 
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Title Banner */}
@@ -302,11 +307,7 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
       </div>
 
       {/* Loading State */}
-      {loading && (
-        <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-          <p className="text-gray-500 text-lg">Loading deposit requests...</p>
-        </div>
-      )}
+      {loading && <RequestCardSkeleton count={5} />}
 
       {/* Empty State */}
       {!loading && filteredRequests.length === 0 && (

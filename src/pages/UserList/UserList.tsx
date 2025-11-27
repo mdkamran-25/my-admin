@@ -8,6 +8,7 @@ import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
+import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
 import { userApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockUser } from "../../services/mockData";
@@ -24,11 +25,7 @@ export const UserList = memo(() => {
     search: "",
   });
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch all users (using a large page size to get all)
@@ -39,7 +36,11 @@ export const UserList = memo(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   // Apply filters to get filtered users
   const filteredUsers = allUsers.filter((user) => {
@@ -122,6 +123,10 @@ export const UserList = memo(() => {
     }
   }, []);
 
+  const handleRefresh = useCallback(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
   const calculateInactiveDays = (lastActiveDate: string) => {
     const lastActive = new Date(lastActiveDate);
     const today = new Date();
@@ -131,7 +136,7 @@ export const UserList = memo(() => {
   };
 
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Filter Section - Simplified */}
@@ -175,15 +180,7 @@ export const UserList = memo(() => {
       </div>
 
       {/* Loading State */}
-      {loading && (
-        <div className="space-y-3">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
-              <div className="h-6 bg-gray-200 rounded w-full"></div>
-            </div>
-          ))}
-        </div>
-      )}
+      {loading && <TableRowSkeleton count={5} />}
 
       {/* Empty State */}
       {!loading && paginatedUsers.length === 0 && (

@@ -1,6 +1,6 @@
 // Withdraw History Page - displays approved and rejected withdrawal history
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
@@ -8,6 +8,7 @@ import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
+import { RequestCardSkeleton } from "../../components/common/SkeletonLoaders";
 import { withdrawalApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockWithdrawRequest } from "../../services/mockData";
@@ -27,7 +28,7 @@ export const WithdrawHistory = memo(() => {
   const [showToast, setShowToast] = useState(false);
 
   // Fetch withdrawal history (only Approved and Rejected)
-  const fetchWithdrawalHistory = async () => {
+  const fetchWithdrawalHistory = useCallback(async () => {
     setLoading(true);
     try {
       const response = await withdrawalApi.getWithdrawals(1, 1000); // Get all for filtering
@@ -43,11 +44,16 @@ export const WithdrawHistory = memo(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pageSize]);
+
+  const handleRefresh = useCallback(() => {
+    setCurrentPage(1);
+    fetchWithdrawalHistory();
+  }, [fetchWithdrawalHistory]);
 
   useEffect(() => {
     fetchWithdrawalHistory();
-  }, []);
+  }, [fetchWithdrawalHistory]);
 
   // Apply filters
   const filteredRequests = requests.filter((req) => {
@@ -235,7 +241,7 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
   };
 
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Title Banner */}
@@ -318,11 +324,7 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
       </div>
 
       {/* Loading State */}
-      {loading && (
-        <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-          <p className="text-gray-500 text-lg">Loading withdrawal history...</p>
-        </div>
-      )}
+      {loading && <RequestCardSkeleton count={5} />}
 
       {/* Empty State */}
       {!loading && paginatedRequests.length === 0 && (

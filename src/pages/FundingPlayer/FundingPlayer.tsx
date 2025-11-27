@@ -1,6 +1,6 @@
 // Funding Player Page - search and manage player funding
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
@@ -8,6 +8,7 @@ import { FilterBar } from "../../components/common/FilterBar";
 import { ExportButtons } from "../../components/common/ExportButtons";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
+import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
 import { userApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockUser } from "../../services/mockData";
@@ -21,11 +22,7 @@ export const FundingPlayer = memo(() => {
   const pageSize = 20;
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    fetchPlayers();
-  }, [currentPage, searchQuery]);
-
-  const fetchPlayers = async () => {
+  const fetchPlayers = useCallback(async () => {
     setLoading(true);
     try {
       const response = await userApi.getUsers(currentPage, pageSize);
@@ -45,7 +42,15 @@ export const FundingPlayer = memo(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, pageSize, searchQuery]);
+
+  useEffect(() => {
+    fetchPlayers();
+  }, [fetchPlayers]);
+
+  const handleRefresh = useCallback(() => {
+    setCurrentPage(1);
+  }, []);
 
   const handleExportCSV = () => {
     exportToCSV(players, "funding-players", [
@@ -71,7 +76,7 @@ export const FundingPlayer = memo(() => {
   };
 
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Header */}
@@ -93,18 +98,7 @@ export const FundingPlayer = memo(() => {
       />
 
       {/* Loading State */}
-      {loading && (
-        <div className="bg-white shadow-lg p-6 space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="animate-pulse flex space-x-4">
-              <div className="flex-1 space-y-3 py-1">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {loading && <TableRowSkeleton count={5} />}
 
       {/* Empty State */}
       {!loading && players.length === 0 && (

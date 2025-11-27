@@ -1,6 +1,6 @@
 // Wallet Details Page - User Statistics and Registration Data
 
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
@@ -134,8 +134,12 @@ export const WalletDetails = memo(() => {
     showToastNotification("✅ Exported to PDF");
   };
 
+  const handleRefresh = useCallback(() => {
+    showToastNotification("✅ Data refreshed");
+  }, []);
+
   return (
-    <Layout>
+    <Layout onRefresh={handleRefresh}>
       <BackButton />
 
       {/* Title Banner */}
