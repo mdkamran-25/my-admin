@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 export const ReportGeneration = memo(() => {
   const [gameType, setGameType] = useState("Game Type");
@@ -46,6 +47,8 @@ export const ReportGeneration = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Filter Section */}
       <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
         <div className="grid grid-cols-2 gap-3 mb-3">

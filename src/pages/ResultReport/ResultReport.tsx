@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 interface GameResult {
   id: string;
@@ -111,6 +112,8 @@ export const ResultReport = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Date Filter */}
       <div className="mb-4">
         <input

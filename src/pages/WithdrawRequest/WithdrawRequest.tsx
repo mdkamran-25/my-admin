@@ -4,6 +4,7 @@ import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 interface WithdrawRequestDetails {
   id: string;
@@ -221,6 +222,8 @@ export const WithdrawRequest = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+
       {/* Title Banner */}
       <div className="bg-black text-white p-3 rounded-xl text-center shadow-lg mb-4">
         <h1 className="text-xl font-semibold">Withdraw Money Request</h1>

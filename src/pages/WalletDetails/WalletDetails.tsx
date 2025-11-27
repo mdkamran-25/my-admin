@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 export const WalletDetails = memo(() => {
   // Mock data - replace with actual API call
@@ -26,6 +27,8 @@ export const WalletDetails = memo(() => {
 
   return (
     <Layout bgColor="bg-gray-100" contentPadding="px-3 py-4">
+      <BackButton />
+
       <div className="space-y-3">
         {/* Top Stats Grid */}
         <div className="grid grid-cols-2 gap-3">

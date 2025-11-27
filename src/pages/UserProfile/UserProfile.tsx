@@ -3,6 +3,7 @@
 import { memo, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 import { FaUser, FaEdit } from "react-icons/fa";
 
 interface UserProfile {
@@ -76,6 +77,8 @@ export const UserProfile = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Back Button */}
       <button
         onClick={handleBack}

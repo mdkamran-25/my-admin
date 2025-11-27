@@ -2,6 +2,7 @@
 
 import { memo, useState } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 interface ActivityLog {
   id: number;
@@ -54,6 +55,8 @@ export const ActivityLogs = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+
       {/* Title */}
       <div className="bg-gray-900 rounded-full py-4 mb-4 shadow-md">
         <h1 className="text-white text-xl font-bold text-center">

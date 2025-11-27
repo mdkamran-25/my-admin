@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 export const GameCancel = memo(() => {
   const [selectedGameList, setSelectedGameList] = useState("All Game");
@@ -31,6 +32,8 @@ export const GameCancel = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Title Button */}
       <button className="w-full py-4 bg-blue-600 text-white rounded-full text-lg font-bold hover:bg-blue-700 transition-colors shadow-md mb-4">
         Game Cancel History

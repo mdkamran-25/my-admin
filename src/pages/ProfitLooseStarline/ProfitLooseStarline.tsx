@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 interface StarlineGame {
   id: string;
@@ -135,6 +136,8 @@ export const ProfitLooseStarline = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Filter Section */}
       <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
         <div className="grid grid-cols-2 gap-3 mb-3">

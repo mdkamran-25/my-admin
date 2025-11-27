@@ -4,6 +4,7 @@ import { memo, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPhone, FaEye, FaTrash } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 interface User {
   id: string;
@@ -84,6 +85,8 @@ export const UserList = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+
       {/* Filter Section */}
       <div className="bg-white rounded-xl p-3 mb-4 shadow-sm">
         <div className="flex gap-3 mb-3">

@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 
 interface Player {
   sno: number;
@@ -116,6 +117,8 @@ export const FundingPlayer = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Search Section */}
       <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
         {/* Search by Name */}

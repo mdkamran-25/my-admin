@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { Layout } from "../../components/layout/Layout";
+import { BackButton } from "../../components/common/BackButton";
 import { FaEdit } from "react-icons/fa";
 
 interface Game {
@@ -112,6 +113,8 @@ export const AddGame = memo(() => {
 
   return (
     <Layout>
+      <BackButton />
+      
       {/* Add New Game Section */}
       <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">
