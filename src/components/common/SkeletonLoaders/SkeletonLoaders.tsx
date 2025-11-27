@@ -93,7 +93,7 @@ export const ActivityCardSkeleton = ({ count = 5 }: { count?: number }) => (
         className="bg-white rounded-xl p-4 animate-skeleton-shimmer shadow-sm"
       >
         <div className="flex gap-4">
-          <div className="h-12 w-12 bg-slate-200 rounded-lg flex-shrink-0"></div>
+          <div className="h-12 w-12 bg-slate-200 rounded-lg shrink-0"></div>
           <div className="flex-1 space-y-2">
             <div className="h-5 bg-slate-200 rounded w-3/4"></div>
             <div className="h-4 bg-slate-200 rounded w-1/2"></div>
