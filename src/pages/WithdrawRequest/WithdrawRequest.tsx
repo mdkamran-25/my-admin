@@ -1,6 +1,6 @@
 // Withdraw Request Page - displays list of withdrawal requests
 
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
@@ -29,6 +29,9 @@ export const WithdrawRequest = memo(() => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [filteredRequests, setFilteredRequests] = useState<
+    WithdrawRequestDetails[]
+  >([]);
 
   // Mock data - replace with API call
   const requests: WithdrawRequestDetails[] = [
@@ -39,7 +42,7 @@ export const WithdrawRequest = memo(() => {
       amount: 1300,
       wallet: 0.5,
       username: "sonu",
-      requestDate: "24/11/2025 09:02 AM",
+      requestDate: "27/11/2025 09:02 AM",
       status: "Pending",
       type: "bank",
       accountName: "SHAKUN",
@@ -54,8 +57,8 @@ export const WithdrawRequest = memo(() => {
       amount: 2700,
       wallet: 1.2,
       username: "Akshay",
-      requestDate: "24/11/2025 09:15 AM",
-      status: "Pending",
+      requestDate: "27/11/2025 09:15 AM",
+      status: "Approved",
       type: "bank",
       accountName: "AKSHAY KUMAR",
       bankName: "STATE BANK OF INDIA",
@@ -69,7 +72,7 @@ export const WithdrawRequest = memo(() => {
       amount: 800,
       wallet: 0.3,
       username: "Niru",
-      requestDate: "24/11/2025 08:45 AM",
+      requestDate: "26/11/2025 08:45 AM",
       status: "Pending",
       type: "bank",
       accountName: "NIRU SHARMA",
@@ -84,8 +87,8 @@ export const WithdrawRequest = memo(() => {
       amount: 3800,
       wallet: 2.1,
       username: "EDIGA",
-      requestDate: "24/11/2025 10:30 AM",
-      status: "Pending",
+      requestDate: "26/11/2025 10:30 AM",
+      status: "Rejected",
       type: "bank",
       accountName: "EDIGA REDDY",
       bankName: "ICICI BANK",
@@ -99,8 +102,8 @@ export const WithdrawRequest = memo(() => {
       amount: 1000,
       wallet: 0.8,
       username: "umeshvasave",
-      requestDate: "24/11/2025 11:00 AM",
-      status: "Pending",
+      requestDate: "25/11/2025 11:00 AM",
+      status: "Approved",
       type: "bank",
       accountName: "UMESH VASAVE",
       bankName: "AXIS BANK",
@@ -114,7 +117,7 @@ export const WithdrawRequest = memo(() => {
       amount: 1000,
       wallet: 0.8,
       username: "umeshvasave",
-      requestDate: "24/11/2025 11:05 AM",
+      requestDate: "25/11/2025 11:05 AM",
       status: "Pending",
       type: "bank",
       accountName: "UMESH VASAVE",
@@ -130,7 +133,7 @@ export const WithdrawRequest = memo(() => {
       wallet: 0.2,
       username: "brajlal",
       requestDate: "24/11/2025 09:30 AM",
-      status: "Pending",
+      status: "Approved",
       type: "bank",
       accountName: "BRAJLAL SINGH",
       bankName: "PUNJAB NATIONAL BANK",
@@ -145,7 +148,7 @@ export const WithdrawRequest = memo(() => {
       wallet: 0.4,
       username: "santosh",
       requestDate: "24/11/2025 10:00 AM",
-      status: "Pending",
+      status: "Rejected",
       type: "bank",
       accountName: "SANTOSH KUMAR",
       bankName: "UNION BANK",
@@ -159,7 +162,7 @@ export const WithdrawRequest = memo(() => {
       amount: 2000,
       wallet: 1.5,
       username: "mahendra",
-      requestDate: "24/11/2025 08:30 AM",
+      requestDate: "23/11/2025 08:30 AM",
       status: "Pending",
       type: "bank",
       accountName: "MAHENDRA PATEL",
@@ -174,8 +177,8 @@ export const WithdrawRequest = memo(() => {
       amount: 2750,
       wallet: 1.8,
       username: "KiaaraHemchandra",
-      requestDate: "24/11/2025 09:45 AM",
-      status: "Pending",
+      requestDate: "23/11/2025 09:45 AM",
+      status: "Approved",
       type: "bank",
       accountName: "KIAARA HEMCHANDRA",
       bankName: "YES BANK",
@@ -189,7 +192,7 @@ export const WithdrawRequest = memo(() => {
       amount: 1100,
       wallet: 0.9,
       username: "nani",
-      requestDate: "24/11/2025 10:15 AM",
+      requestDate: "22/11/2025 10:15 AM",
       status: "Pending",
       type: "bank",
       accountName: "NANI REDDY",
@@ -204,21 +207,267 @@ export const WithdrawRequest = memo(() => {
       amount: 1000,
       wallet: 0.7,
       username: "LAKESHbagarty",
-      requestDate: "24/11/2025 11:20 AM",
-      status: "Pending",
+      requestDate: "22/11/2025 11:20 AM",
+      status: "Rejected",
       type: "bank",
       accountName: "LAKESH BAGARTY",
       bankName: "IDBI BANK",
       accountNumber: "88990011223",
       ifsc: "IBKL0008899",
     },
+    {
+      id: "13",
+      phone: "9876543210",
+      name: "Rajesh",
+      amount: 1500,
+      wallet: 1.0,
+      username: "Rajesh",
+      requestDate: "27/11/2025 10:30 AM",
+      status: "Pending",
+      type: "bank",
+      accountName: "RAJESH SHARMA",
+      bankName: "HDFC BANK",
+      accountNumber: "12312312312",
+      ifsc: "HDFC0001231",
+    },
+    {
+      id: "14",
+      phone: "8765432109",
+      name: "Priya",
+      amount: 2200,
+      wallet: 1.3,
+      username: "Priya",
+      requestDate: "26/11/2025 02:15 PM",
+      status: "Approved",
+      type: "bank",
+      accountName: "PRIYA SINGH",
+      bankName: "SBI",
+      accountNumber: "45645645645",
+      ifsc: "SBIN0004564",
+    },
+    {
+      id: "15",
+      phone: "7654321098",
+      name: "Amit",
+      amount: 900,
+      wallet: 0.6,
+      username: "Amit",
+      requestDate: "25/11/2025 03:45 PM",
+      status: "Rejected",
+      type: "bank",
+      accountName: "AMIT VERMA",
+      bankName: "ICICI BANK",
+      accountNumber: "78978978978",
+      ifsc: "ICIC0007897",
+    },
+    {
+      id: "16",
+      phone: "6543210987",
+      name: "Sneha",
+      amount: 3200,
+      wallet: 2.0,
+      username: "Sneha",
+      requestDate: "24/11/2025 11:30 AM",
+      status: "Pending",
+      type: "bank",
+      accountName: "SNEHA PATEL",
+      bankName: "AXIS BANK",
+      accountNumber: "32132132132",
+      ifsc: "UTIB0003213",
+    },
+    {
+      id: "17",
+      phone: "5432109876",
+      name: "Vikram",
+      amount: 1800,
+      wallet: 1.1,
+      username: "Vikram",
+      requestDate: "23/11/2025 04:00 PM",
+      status: "Approved",
+      type: "bank",
+      accountName: "VIKRAM SINGH",
+      bankName: "KOTAK BANK",
+      accountNumber: "65465465465",
+      ifsc: "KKBK0006546",
+    },
+    {
+      id: "18",
+      phone: "4321098765",
+      name: "Pooja",
+      amount: 1200,
+      wallet: 0.9,
+      username: "Pooja",
+      requestDate: "22/11/2025 01:20 PM",
+      status: "Pending",
+      type: "bank",
+      accountName: "POOJA REDDY",
+      bankName: "CANARA BANK",
+      accountNumber: "98798798798",
+      ifsc: "CNRB0009879",
+    },
+    {
+      id: "19",
+      phone: "3210987654",
+      name: "Ramesh",
+      amount: 2500,
+      wallet: 1.5,
+      username: "Ramesh",
+      requestDate: "27/11/2025 12:00 PM",
+      status: "Rejected",
+      type: "bank",
+      accountName: "RAMESH KUMAR",
+      bankName: "PNB",
+      accountNumber: "14714714714",
+      ifsc: "PUNB0014714",
+    },
+    {
+      id: "20",
+      phone: "2109876543",
+      name: "Kavita",
+      amount: 1700,
+      wallet: 1.2,
+      username: "Kavita",
+      requestDate: "26/11/2025 05:30 PM",
+      status: "Approved",
+      type: "bank",
+      accountName: "KAVITA SHARMA",
+      bankName: "YES BANK",
+      accountNumber: "25825825825",
+      ifsc: "YESB0002582",
+    },
+    {
+      id: "21",
+      phone: "1098765432",
+      name: "Suresh",
+      amount: 950,
+      wallet: 0.7,
+      username: "Suresh",
+      requestDate: "25/11/2025 09:15 AM",
+      status: "Pending",
+      type: "bank",
+      accountName: "SURESH PATEL",
+      bankName: "UNION BANK",
+      accountNumber: "36936936936",
+      ifsc: "UBIN0036936",
+    },
+    {
+      id: "22",
+      phone: "9988776655",
+      name: "Anjali",
+      amount: 2100,
+      wallet: 1.4,
+      username: "Anjali",
+      requestDate: "24/11/2025 03:00 PM",
+      status: "Approved",
+      type: "bank",
+      accountName: "ANJALI VERMA",
+      bankName: "IDBI BANK",
+      accountNumber: "74174174174",
+      ifsc: "IBKL0007417",
+    },
+    {
+      id: "23",
+      phone: "8877665544",
+      name: "Deepak",
+      amount: 1350,
+      wallet: 0.8,
+      username: "Deepak",
+      requestDate: "23/11/2025 10:45 AM",
+      status: "Rejected",
+      type: "bank",
+      accountName: "DEEPAK SINGH",
+      bankName: "BOB",
+      accountNumber: "85285285285",
+      ifsc: "BARB0085285",
+    },
+    {
+      id: "24",
+      phone: "7766554433",
+      name: "Meera",
+      amount: 2900,
+      wallet: 1.9,
+      username: "Meera",
+      requestDate: "22/11/2025 02:30 PM",
+      status: "Pending",
+      type: "bank",
+      accountName: "MEERA REDDY",
+      bankName: "SBI",
+      accountNumber: "96396396396",
+      ifsc: "SBIN0009639",
+    },
+    {
+      id: "25",
+      phone: "6655443322",
+      name: "Karan",
+      amount: 1600,
+      wallet: 1.0,
+      username: "Karan",
+      requestDate: "27/11/2025 01:45 PM",
+      status: "Approved",
+      type: "bank",
+      accountName: "KARAN SHARMA",
+      bankName: "HDFC BANK",
+      accountNumber: "15915915915",
+      ifsc: "HDFC0015915",
+    },
   ];
 
-  const totalAmount = requests.reduce((sum, req) => sum + req.amount, 0);
+  // Initialize with all requests
+  useEffect(() => {
+    setFilteredRequests(requests);
+  }, []);
 
+  // Filter logic
   const handleFilter = () => {
-    console.log("Filtering:", { dateFilter, statusFilter, searchQuery });
+    let filtered = [...requests];
+
+    // Filter by date
+    if (dateFilter) {
+      const filterDate = new Date(dateFilter);
+      const filterDateStr = `${String(filterDate.getDate()).padStart(
+        2,
+        "0"
+      )}/${String(filterDate.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}/${filterDate.getFullYear()}`;
+
+      filtered = filtered.filter((req) => {
+        const reqDate = req.requestDate.split(" ")[0]; // Get date part only
+        return reqDate === filterDateStr;
+      });
+    }
+
+    // Filter by status
+    if (statusFilter) {
+      filtered = filtered.filter(
+        (req) => req.status.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+
+    // Filter by search query (phone or name)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(
+        (req) =>
+          req.phone.includes(query) ||
+          req.name.toLowerCase().includes(query) ||
+          req.username.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredRequests(filtered);
   };
+
+  // Auto-filter when inputs change
+  useEffect(() => {
+    handleFilter();
+  }, [dateFilter, statusFilter, searchQuery]);
+
+  const totalAmount = filteredRequests.reduce(
+    (sum, req) => sum + req.amount,
+    0
+  );
 
   return (
     <Layout>
@@ -251,10 +500,10 @@ export const WithdrawRequest = memo(() => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
           </select>
           <svg
             className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
@@ -278,7 +527,7 @@ export const WithdrawRequest = memo(() => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="search"
+          placeholder="Search by phone or name..."
           className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
@@ -292,13 +541,23 @@ export const WithdrawRequest = memo(() => {
       {/* Amount Summary */}
       <div className="text-center mb-4">
         <p className="text-gray-700 text-base font-medium">
-          Amount : {totalAmount} ({requests.length})
+          Amount : {totalAmount} ({filteredRequests.length})
         </p>
       </div>
 
+      {/* No Results Message */}
+      {filteredRequests.length === 0 && (
+        <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+          <p className="text-gray-500 text-lg">No requests found</p>
+          <p className="text-gray-400 text-sm mt-2">
+            Try adjusting your filters
+          </p>
+        </div>
+      )}
+
       {/* Request Cards */}
       <div className="space-y-3 pb-6">
-        {requests.map((request) => (
+        {filteredRequests.map((request) => (
           <div
             key={request.id}
             className="bg-white border-2 border-blue-800 rounded-xl overflow-hidden shadow-sm"
@@ -316,11 +575,27 @@ export const WithdrawRequest = memo(() => {
                   <p className="text-gray-900 text-lg font-bold">
                     {request.name}
                   </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-white ${
+                        request.status === "Pending"
+                          ? "bg-yellow-500"
+                          : request.status === "Approved"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }`}
+                    >
+                      {request.status}
+                    </span>
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-gray-600 text-xs mb-1">POINT</p>
                   <p className="text-gray-900 text-2xl font-bold">
                     {request.amount}
+                  </p>
+                  <p className="text-gray-500 text-xs mt-1">
+                    {request.requestDate}
                   </p>
                 </div>
               </div>
