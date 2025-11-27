@@ -1,55 +1,79 @@
 // User Activity Log Page - displays user activity history with filters
 
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
-
-interface ActivityLog {
-  id: number;
-  phone: string;
-  username: string;
-  activityType: string;
-  details: string;
-  timestamp: string;
-}
+import { FilterBar } from "../../components/common/FilterBar";
+import { ExportButtons } from "../../components/common/ExportButtons";
+import { Pagination } from "../../components/common/Pagination";
+import { EmptyState } from "../../components/common/EmptyState";
+import { activityApi } from "../../services/mockApi";
+import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
+import type { MockActivityLog } from "../../services/mockData";
 
 export const ActivityLogs = memo(() => {
-  const [selectedDate, setSelectedDate] = useState("2025-11-25");
-  const [selectedActivity, setSelectedActivity] = useState("Select Activity");
+  const [activityLogs, setActivityLogs] = useState<MockActivityLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10;
+  const [filters, setFilters] = useState({
+    date: "",
+    activityType: "",
+    search: "",
+  });
 
-  // Mock data - replace with API call
-  const activityLogs: ActivityLog[] = [
-    {
-      id: 1,
-      phone: "7569946821",
-      username: "khan",
-      activityType: "Bank Info",
-      details:
-        "Update bank info Account Holder name: raheemulla Bank Name : Union Bank of India Account number: 175310100140767 IFSC: UBIN0817538",
-      timestamp: "user, 2025-11-25 23:25:57",
-    },
-    {
-      id: 2,
-      phone: "9866432941",
-      username: "ameer",
-      activityType: "Bank Info",
-      details:
-        "Update bank info Account Holder name: Sheikh ameer Basha Bank Name : State Bank of India Account number: 42390022797 IFSC: SBIN0000790",
-      timestamp: "user, 2025-11-25 23:23:10",
-    },
-    {
-      id: 3,
-      phone: "7350041867",
-      username: "sohan",
-      activityType: "Bank Info",
-      details:
-        "Update bank info Account Holder name: Sohan Kumar Bank Name : HDFC Bank Account number: 50100234567890 IFSC: HDFC0001234",
-      timestamp: "user, 2025-11-25 22:15:30",
-    },
-  ];
+  useEffect(() => {
+    fetchActivityLogs();
+  }, [currentPage, pageSize, filters]);
+
+  const fetchActivityLogs = async () => {
+    setLoading(true);
+    try {
+      const response = await activityApi.getActivityLogs(currentPage, pageSize);
+      // Note: Filtering by date/activityType/search would need to be implemented in activityApi
+      // For now, we're using all logs returned from the API
+      setActivityLogs(response.data);
+      setTotalPages(response.pagination.totalPages);
+    } catch (error) {
+      console.error("Failed to fetch activity logs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (value: string) => {
+    setFilters((prev) => ({ ...prev, activityType: value }));
+    setCurrentPage(1);
+  };
+
+  const handleExportCSV = () => {
+    exportToCSV(activityLogs, "activity-logs", [
+      "id",
+      "username",
+      "phone",
+      "activity",
+      "timestamp",
+    ]);
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF({
+      title: "User Activity Logs",
+      filename: "activity-logs",
+      data: activityLogs,
+      columns: [
+        { header: "ID", dataKey: "id" },
+        { header: "Username", dataKey: "username" },
+        { header: "Phone", dataKey: "phone" },
+        { header: "Activity", dataKey: "activity" },
+        { header: "Timestamp", dataKey: "timestamp" },
+      ],
+    });
+  };
 
   const getBackgroundColor = (index: number) => {
-    const colors = ["bg-pink-100", "bg-pink-100", "bg-green-100"];
+    const colors = ["bg-pink-100", "bg-blue-100", "bg-green-100"];
     return colors[index % colors.length];
   };
 
@@ -65,88 +89,122 @@ export const ActivityLogs = memo(() => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {/* Date */}
-          <div>
-            <label className="block text-gray-600 text-sm font-medium mb-2">
-              Date
-            </label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <FilterBar
+        showDateFilter
+        customFilters={[
+          {
+            label: "Activity Type",
+            value: filters.activityType,
+            onChange: handleFilterChange,
+            options: [
+              { value: "", label: "All Activities" },
+              { value: "Bank Info", label: "Bank Info" },
+              { value: "Login", label: "Login" },
+              { value: "Logout", label: "Logout" },
+              { value: "Profile Update", label: "Profile Update" },
+              { value: "Withdrawal", label: "Withdrawal" },
+              { value: "Deposit", label: "Deposit" },
+            ],
+          },
+        ]}
+        showSearchFilter
+        searchPlaceholder="Search by username or phone..."
+      />
 
-          {/* Activity */}
-          <div>
-            <label className="block text-gray-600 text-sm font-medium mb-2">
-              Activity
-            </label>
-            <select
-              value={selectedActivity}
-              onChange={(e) => setSelectedActivity(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="Select Activity">Select Activity</option>
-              <option value="Bank Info">Bank Info</option>
-              <option value="Login">Login</option>
-              <option value="Logout">Logout</option>
-              <option value="Profile Update">Profile Update</option>
-            </select>
-          </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="bg-white shadow-lg p-4 animate-pulse">
+              <div className="flex items-center justify-between mb-3">
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-32"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && activityLogs.length === 0 && (
+        <EmptyState message="No activity logs found" />
+      )}
 
       {/* Activity Log List */}
-      <div className="space-y-3">
-        {activityLogs.map((log, index) => (
-          <div
-            key={log.id}
-            className={`${getBackgroundColor(index)} rounded-xl p-4 shadow-sm`}
-          >
-            {/* Header */}
-            <div className="mb-3">
-              <h2 className="text-gray-900 text-lg font-bold">
-                ({log.id}) - {log.phone}
-              </h2>
-              <p className="text-gray-800 text-base font-semibold">
-                {log.username}
-              </p>
-            </div>
-
-            {/* Activity Type */}
-            <div className="flex items-center gap-2 mb-2">
-              <svg
-                className="w-5 h-5 text-gray-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+      {!loading && activityLogs.length > 0 && (
+        <>
+          <div className="space-y-3 mb-4">
+            {activityLogs.map((log, index) => (
+              <div
+                key={log.id}
+                className={`${getBackgroundColor(
+                  index
+                )} rounded-xl p-4 shadow-sm`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                />
-              </svg>
-              <span className="text-gray-800 font-semibold">
-                {log.activityType}
-              </span>
-            </div>
+                {/* Header */}
+                <div className="mb-3">
+                  <h2 className="text-gray-900 text-lg font-bold">
+                    ({log.id}) - {log.phone}
+                  </h2>
+                  <p className="text-gray-800 text-base font-semibold">
+                    {log.username}
+                  </p>
+                </div>
 
-            {/* Details */}
-            <p className="text-gray-700 text-sm leading-relaxed mb-3">
-              {log.details}
-            </p>
+                {/* Activity Type */}
+                <div className="flex items-center gap-2 mb-2">
+                  <svg
+                    className="w-5 h-5 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                    />
+                  </svg>
+                  <span className="text-gray-800 font-semibold">
+                    {log.activity}
+                  </span>
+                </div>
 
-            {/* Timestamp */}
-            <p className="text-gray-600 text-sm">{log.timestamp}</p>
+                {/* Device & IP */}
+                <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                  Device: {log.device} | IP: {log.ipAddress}
+                </p>
+
+                {/* Timestamp */}
+                <p className="text-gray-600 text-sm">{log.timestamp}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={activityLogs.length * totalPages}
+            itemsPerPage={pageSize}
+          />
+
+          {/* Export Buttons */}
+          <div className="mt-4">
+            <ExportButtons
+              onExportCSV={handleExportCSV}
+              onExportPDF={handleExportPDF}
+              disabled={loading || activityLogs.length === 0}
+            />
+          </div>
+        </>
+      )}
     </Layout>
   );
 });

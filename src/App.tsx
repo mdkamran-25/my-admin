@@ -15,6 +15,7 @@ import { AddGame } from "./pages/AddGame";
 import { GameCancel } from "./pages/GameCancel";
 import { FundingPlayer } from "./pages/FundingPlayer";
 import { ActivityLogs } from "./pages/ActivityLogs";
+import { ToastContainer } from "./components/common/Toast";
 import {
   ProfileSettings,
   GameOnOff,
@@ -33,6 +34,7 @@ import {
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/withdraw-request" element={<WithdrawRequest />} />
