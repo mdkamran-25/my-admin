@@ -1,0 +1,1 @@
+export { WinHistoryStarline } from "./WinHistoryStarline";

@@ -50,6 +50,10 @@ export const Dashboard = memo(() => {
     navigate("/users");
   }, [navigate]);
 
+  const handleWalletClick = useCallback(() => {
+    navigate("/wallet-details");
+  }, [navigate]);
+
   // Loading State
   if (loading) {
     return (
@@ -117,7 +121,13 @@ export const Dashboard = memo(() => {
               title={card.title}
               value={card.value}
               color={card.color}
-              onClick={card.title === "Users" ? handleUsersClick : undefined}
+              onClick={
+                card.title === "Users"
+                  ? handleUsersClick
+                  : card.title === "Wallet Amount"
+                  ? handleWalletClick
+                  : undefined
+              }
             />
           ))}
         </div>

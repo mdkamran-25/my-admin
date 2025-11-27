@@ -3,12 +3,14 @@ import { Dashboard } from "./pages/Dashboard";
 import { WithdrawRequest } from "./pages/WithdrawRequest";
 import { UserProfile } from "./pages/UserProfile";
 import { UserList } from "./pages/UserList";
+import { WalletDetails } from "./pages/WalletDetails";
 import { ProfitLoose } from "./pages/ProfitLoose";
 import { ProfitLooseStarline } from "./pages/ProfitLooseStarline";
 import { ResultReport } from "./pages/ResultReport";
 import { ReportGeneration } from "./pages/ReportGeneration";
 import { ReportGenerationStarline } from "./pages/ReportGenerationStarline";
 import { WinHistory } from "./pages/WinHistory";
+import { WinHistoryStarline } from "./pages/WinHistoryStarline";
 import { AddGame } from "./pages/AddGame";
 import { GameCancel } from "./pages/GameCancel";
 import { FundingPlayer } from "./pages/FundingPlayer";
@@ -36,6 +38,7 @@ function App() {
         <Route path="/withdraw-request" element={<WithdrawRequest />} />
         <Route path="/user-profile/:userId" element={<UserProfile />} />
         <Route path="/users" element={<UserList />} />
+        <Route path="/wallet-details" element={<WalletDetails />} />
         <Route path="/profit-loose" element={<ProfitLoose />} />
         <Route
           path="/profit-loose-starline"
@@ -48,9 +51,10 @@ function App() {
           element={<ReportGenerationStarline />}
         />
         <Route path="/win-history" element={<WinHistory />} />
+        <Route path="/win-history-starline" element={<WinHistoryStarline />} />
         <Route path="/add-game" element={<AddGame />} />
         <Route path="/game-cancel" element={<GameCancel />} />
-        <Route path="/funting-player" element={<FundingPlayer />} />
+        <Route path="/funding-player" element={<FundingPlayer />} />
         <Route path="/activity-logs" element={<ActivityLogs />} />
 
         {/* Settings Routes */}

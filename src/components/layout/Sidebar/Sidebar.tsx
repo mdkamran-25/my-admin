@@ -51,7 +51,7 @@ const menuItems = [
   },
   { icon: MdAddCircle, label: "Add New Game", path: "/add-game" },
   { icon: MdCancel, label: "Game Cancel", path: "/game-cancel" },
-  { icon: MdSportsEsports, label: "Funting Player", path: "/funting-player" },
+  { icon: MdSportsEsports, label: "Funding Player", path: "/funding-player" },
   { icon: MdHistory, label: "Activity Logs", path: "/activity-logs" },
   { icon: MdSettings, label: "Settings", path: null, isModal: true },
   { icon: MdLogout, label: "Logout", path: "/logout", isLogout: true },
