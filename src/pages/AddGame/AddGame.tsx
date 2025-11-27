@@ -114,7 +114,7 @@ export const AddGame = memo(() => {
   return (
     <Layout>
       <BackButton />
-      
+
       {/* Add New Game Section */}
       <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">
@@ -174,84 +174,76 @@ export const AddGame = memo(() => {
 
         {/* Days Selection */}
         <div className="mb-6">
-          <div className="grid grid-cols-4 gap-3 mb-3">
+          <div className="grid grid-cols-7 gap-3 mb-3">
             {/* Monday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.mon}
                 onChange={() => handleDayToggle("mon")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Mon</span>
+              <span className="text-gray-700 text-xs font-medium">Mon</span>
             </label>
-
             {/* Tuesday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.tue}
                 onChange={() => handleDayToggle("tue")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Tue</span>
+              <span className="text-gray-700 text-xs font-medium">Tue</span>
             </label>
-
             {/* Wednesday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.wed}
                 onChange={() => handleDayToggle("wed")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Wed</span>
+              <span className="text-gray-700 text-xs font-medium">Wed</span>
             </label>
-
             {/* Thursday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.thu}
                 onChange={() => handleDayToggle("thu")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Thu</span>
+              <span className="text-gray-700 text-xs font-medium">Thu</span>
             </label>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
             {/* Friday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.fri}
                 onChange={() => handleDayToggle("fri")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Fri</span>
+              <span className="text-gray-700 text-xs font-medium">Fri</span>
             </label>
-
             {/* Saturday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.sat}
                 onChange={() => handleDayToggle("sat")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Sat</span>
+              <span className="text-gray-700 text-xs font-medium">Sat</span>
             </label>
-
             {/* Sunday */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex flex-col items-center space-y-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedDays.sun}
                 onChange={() => handleDayToggle("sun")}
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-gray-700 text-sm font-medium">Sun</span>
+              <span className="text-gray-700 text-xs font-medium">Sun</span>
             </label>
           </div>
         </div>

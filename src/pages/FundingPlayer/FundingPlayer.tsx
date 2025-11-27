@@ -1,6 +1,7 @@
 // Funding Player Page - search and manage player funding
 
 import { memo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { FilterBar } from "../../components/common/FilterBar";
@@ -12,6 +13,7 @@ import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockUser } from "../../services/mockData";
 
 export const FundingPlayer = memo(() => {
+  const navigate = useNavigate();
   const [players, setPlayers] = useState<MockUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,123 +114,133 @@ export const FundingPlayer = memo(() => {
       {/* Table Section */}
       {!loading && players.length > 0 && (
         <>
-          <div className="bg-white shadow-lg overflow-hidden mb-4">
+          <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-4">
             <div className="overflow-x-auto">
-              <div className="min-w-[700px]">
-                {/* Table Header - First Row */}
-                <div className="bg-yellow-500 grid grid-cols-2 gap-0 text-sm font-bold text-gray-800">
-                  <div className="text-center py-3 border-r border-yellow-600">
-                    s.no.
-                  </div>
-                  <div className="text-center py-3">username</div>
-                </div>
+              <table className="w-full min-w-[800px]">
+                {/* Table Header */}
+                <thead>
+                  <tr className="bg-yellow-500 text-gray-800 text-sm font-bold">
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      S.No.
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      Username
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      Phone
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      Call
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      WP
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      Recharge
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      Withdrawal
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      Wallet
+                    </th>
+                    <th className="text-center py-3 px-2 whitespace-nowrap">
+                      View
+                    </th>
+                  </tr>
+                </thead>
 
                 {/* Table Body */}
-                <div>
+                <tbody>
                   {players.map((player, index) => (
-                    <div key={player.id}>
-                      {/* Player Info Row */}
-                      <div className="grid grid-cols-2 gap-0 border-b border-gray-200">
-                        <div className="text-center py-4 font-medium text-gray-700 border-r border-gray-200">
-                          {(currentPage - 1) * pageSize + index + 1}
-                        </div>
-                        <div className="text-center py-4">
-                          <div className="font-semibold text-gray-800">
-                            {player.username}
-                          </div>
-                          <div className="text-gray-600 text-sm mt-1">
-                            {player.phone}
-                          </div>
-                        </div>
-                      </div>
+                    <tr
+                      key={player.id}
+                      className="border-b border-gray-200 hover:bg-gray-50"
+                    >
+                      {/* S.No. */}
+                      <td className="text-center py-3 px-2 font-medium text-gray-700">
+                        {(currentPage - 1) * pageSize + index + 1}
+                      </td>
 
-                      {/* Table Header for Actions */}
-                      <div className="bg-yellow-500 grid grid-cols-6 gap-0 text-xs font-bold text-gray-800">
-                        <div className="text-center py-2 border-r border-yellow-600">
-                          Call
-                        </div>
-                        <div className="text-center py-2 border-r border-yellow-600">
-                          WP
-                        </div>
-                        <div className="text-center py-2 border-r border-yellow-600">
-                          Recharge
-                        </div>
-                        <div className="text-center py-2 border-r border-yellow-600">
-                          Withdrawal
-                        </div>
-                        <div className="text-center py-2 border-r border-yellow-600">
-                          Wallet
-                        </div>
-                        <div className="text-center py-2">View</div>
-                      </div>
+                      {/* Username */}
+                      <td className="text-center py-3 px-2">
+                        <span className="font-semibold text-gray-800">
+                          {player.username}
+                        </span>
+                      </td>
 
-                      {/* Action Row */}
-                      <div className="grid grid-cols-6 gap-0 border-b-4 border-gray-300">
-                        {/* Call */}
-                        <div className="text-center py-3 border-r border-gray-200">
-                          <a
-                            href={`tel:${player.phone}`}
-                            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                      {/* Phone */}
+                      <td className="text-center py-3 px-2 text-gray-600 text-sm">
+                        {player.phone}
+                      </td>
+
+                      {/* Call */}
+                      <td className="text-center py-3 px-2">
+                        <a
+                          href={`tel:${player.phone}`}
+                          className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                        >
+                          📞 Call
+                        </a>
+                      </td>
+
+                      {/* WP */}
+                      <td className="text-center py-3 px-2">
+                        <a
+                          href={`https://wa.me/${player.phone}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 hover:text-green-700 font-medium text-sm"
+                        >
+                          💬 WP
+                        </a>
+                      </td>
+
+                      {/* Recharge */}
+                      <td className="text-center py-3 px-2">
+                        <span className="inline-block px-3 py-1 rounded bg-green-600 font-bold text-white text-sm">
+                          {player.points || 0}
+                        </span>
+                      </td>
+
+                      {/* Withdrawal */}
+                      <td className="text-center py-3 px-2">
+                        <span className="inline-block px-3 py-1 rounded bg-red-600 font-bold text-white text-sm">
+                          {player.inactiveDays || 0}
+                        </span>
+                      </td>
+
+                      {/* Wallet */}
+                      <td className="text-center py-3 px-2">
+                        <span className="inline-block px-3 py-1 rounded bg-blue-600 font-bold text-white text-sm">
+                          {(player.wallet || 0).toFixed(1)}
+                        </span>
+                      </td>
+
+                      {/* View */}
+                      <td className="text-center py-3 px-2">
+                        <button
+                          onClick={() => navigate(`/user-profile/${player.id}`)}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <svg
+                            className="w-5 h-5 mx-auto"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
                           >
-                            Call
-                          </a>
-                        </div>
-
-                        {/* WP */}
-                        <div className="text-center py-3 border-r border-gray-200">
-                          <a
-                            href={`https://wa.me/${player.phone}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:text-blue-600 font-medium text-sm"
-                          >
-                            Wp
-                          </a>
-                        </div>
-
-                        {/* Recharge */}
-                        <div className="text-center py-3 border-r border-gray-200">
-                          <span className="inline-block px-4 py-1.5 rounded bg-green-600 font-bold text-white text-sm">
-                            {player.points || 0}
-                          </span>
-                        </div>
-
-                        {/* Withdrawal */}
-                        <div className="text-center py-3 border-r border-gray-200">
-                          <span className="inline-block px-4 py-1.5 rounded bg-red-600 font-bold text-white text-sm">
-                            {player.inactiveDays || 0}
-                          </span>
-                        </div>
-
-                        {/* Wallet */}
-                        <div className="text-center py-3 border-r border-gray-200">
-                          <span className="inline-block px-4 py-1.5 rounded bg-blue-600 font-bold text-white text-sm">
-                            {(player.wallet || 0).toFixed(1)}
-                          </span>
-                        </div>
-
-                        {/* View */}
-                        <div className="text-center py-3">
-                          <button className="text-gray-600 hover:text-gray-800">
-                            <svg
-                              className="w-5 h-5 mx-auto"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                              <path
-                                fillRule="evenodd"
-                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path
+                              fillRule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </div>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
 
