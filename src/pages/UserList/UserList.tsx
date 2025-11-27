@@ -15,10 +15,9 @@ import type { MockUser } from "../../services/mockData";
 export const UserList = memo(() => {
   const navigate = useNavigate();
 
-  const [users, setUsers] = useState<MockUser[]>([]);
+  const [allUsers, setAllUsers] = useState<MockUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const pageSize = 20;
   const [filters, setFilters] = useState({
     status: "",
@@ -27,33 +26,57 @@ export const UserList = memo(() => {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, pageSize, filters]);
+  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await userApi.getUsers(currentPage, pageSize);
-      setUsers(response.data);
-      setTotalPages(response.pagination.totalPages);
+      // Fetch all users (using a large page size to get all)
+      const response = await userApi.getUsers(1, 1000);
+      setAllUsers(response.data);
     } catch (error) {
       console.error("Failed to fetch users:", error);
-      console.error("Failed to load users:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  // Apply filters to get filtered users
+  const filteredUsers = allUsers.filter((user) => {
+    // Status filter
+    if (filters.status && user.status !== filters.status) {
+      return false;
+    }
+    // Search filter (username or phone)
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      const matchesUsername = user.username.toLowerCase().includes(searchLower);
+      const matchesPhone = user.phone.includes(filters.search);
+      if (!matchesUsername && !matchesPhone) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // Calculate pagination for filtered users
+  const totalPages = Math.ceil(filteredUsers.length / pageSize);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleFilterChange = (newFilters: {
     status: string;
     search: string;
   }) => {
     setFilters(newFilters);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   const handleExportCSV = () => {
-    const exportData = users.map((u, idx) => ({
-      sn: (currentPage - 1) * pageSize + idx + 1,
+    const exportData = filteredUsers.map((u, idx) => ({
+      sn: idx + 1,
       username: u.username,
       phone: u.phone,
       points: u.points,
@@ -64,8 +87,8 @@ export const UserList = memo(() => {
   };
 
   const handleExportPDF = () => {
-    const exportData = users.map((u, idx) => ({
-      sn: (currentPage - 1) * pageSize + idx + 1,
+    const exportData = filteredUsers.map((u, idx) => ({
+      sn: idx + 1,
       username: u.username,
       phone: u.phone,
       points: u.points,
@@ -163,12 +186,12 @@ export const UserList = memo(() => {
       )}
 
       {/* Empty State */}
-      {!loading && users.length === 0 && (
+      {!loading && paginatedUsers.length === 0 && (
         <EmptyState message="No users found" />
       )}
 
       {/* User Table */}
-      {!loading && users.length > 0 && (
+      {!loading && paginatedUsers.length > 0 && (
         <>
           <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
             <div className="overflow-x-auto">
@@ -187,7 +210,7 @@ export const UserList = memo(() => {
 
                 {/* Table Body */}
                 <div className="divide-y divide-gray-200">
-                  {users.map((user, index) => (
+                  {paginatedUsers.map((user, index) => (
                     <div
                       key={user.id}
                       className="grid grid-cols-[50px_60px_1fr_80px_120px_80px_100px_80px] gap-2 p-3 items-center hover:bg-gray-50 transition-colors text-sm"
@@ -276,7 +299,7 @@ export const UserList = memo(() => {
             <ExportButtons
               onExportCSV={handleExportCSV}
               onExportPDF={handleExportPDF}
-              disabled={loading || users.length === 0}
+              disabled={loading || filteredUsers.length === 0}
             />
           </div>
         </>
