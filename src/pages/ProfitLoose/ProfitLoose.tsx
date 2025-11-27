@@ -157,15 +157,6 @@ export const ProfitLoose = memo(() => {
     <Layout>
       <BackButton />
 
-      {/* Export Buttons */}
-      <div className="mb-4">
-        <ExportButtons
-          onExportCSV={handleExportCSV}
-          onExportPDF={handleExportPDF}
-          disabled={filteredGames.length === 0}
-        />
-      </div>
-
       {/* Filter Section */}
       <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
         <div className="grid grid-cols-2 gap-3 mb-3">

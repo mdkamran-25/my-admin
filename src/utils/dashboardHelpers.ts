@@ -27,7 +27,7 @@ export const mapOverviewToStatCards = (stats: DashboardStats | null) => {
     {
       title: "Wallet Amount",
       value: formatCurrency(stats.walletAmount),
-      color: "pink" as const,
+      color: "green" as const,
     },
   ];
 };

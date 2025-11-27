@@ -1,10 +1,18 @@
 // Wallet Details Page - User Statistics and Registration Data
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
+import { ExportButtons } from "../../components/common/ExportButtons";
+import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 
 export const WalletDetails = memo(() => {
+  const [dateFilter, setDateFilter] = useState("");
+  const [monthFilter, setMonthFilter] = useState("");
+  const [yearFilter, setYearFilter] = useState("2025");
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
   // Mock data - replace with actual API call
   const walletData = {
     totalUsers: 18917,
@@ -25,108 +33,323 @@ export const WalletDetails = memo(() => {
     blockDevices: 27,
   };
 
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const years = ["2023", "2024", "2025", "2026"];
+
+  const showToastNotification = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleExportCSV = () => {
+    const csvData = [
+      {
+        Metric: "Total Users",
+        Value: walletData.totalUsers,
+      },
+      {
+        Metric: "Today Register",
+        Value: walletData.todayRegister,
+      },
+      {
+        Metric: "Yesterday Register",
+        Value: walletData.yesterdayRegister,
+      },
+      {
+        Metric: "Current Week Register",
+        Value: walletData.currentWeekRegister,
+      },
+      {
+        Metric: "Monthly Registration",
+        Value: walletData.monthlyRegistration.count,
+      },
+      {
+        Metric: "Play Active Users",
+        Value: walletData.playActiveUsers,
+      },
+      {
+        Metric: "Play Inactive Users",
+        Value: walletData.playInactiveUsers,
+      },
+      {
+        Metric: "Block Devices",
+        Value: walletData.blockDevices,
+      },
+    ];
+    exportToCSV(csvData, "wallet_details");
+    showToastNotification("✅ Exported to CSV");
+  };
+
+  const handleExportPDF = () => {
+    const columns = [
+      { header: "Metric", dataKey: "metric" },
+      { header: "Value", dataKey: "value" },
+    ];
+    const data = [
+      { metric: "Total Users", value: walletData.totalUsers.toString() },
+      { metric: "Today Register", value: walletData.todayRegister.toString() },
+      {
+        metric: "Yesterday Register",
+        value: walletData.yesterdayRegister.toString(),
+      },
+      {
+        metric: "Current Week Register",
+        value: walletData.currentWeekRegister.toString(),
+      },
+      {
+        metric: "Monthly Registration",
+        value: walletData.monthlyRegistration.count.toString(),
+      },
+      {
+        metric: "Play Active Users",
+        value: walletData.playActiveUsers.toString(),
+      },
+      {
+        metric: "Play Inactive Users",
+        value: walletData.playInactiveUsers.toString(),
+      },
+      { metric: "Block Devices", value: walletData.blockDevices.toString() },
+    ];
+    exportToPDF({
+      title: "Wallet Details Report",
+      filename: "wallet_details",
+      columns,
+      data,
+    });
+    showToastNotification("✅ Exported to PDF");
+  };
+
   return (
-    <Layout bgColor="bg-gray-100" contentPadding="px-3 py-4">
+    <Layout>
       <BackButton />
 
-      <div className="space-y-3">
-        {/* Top Stats Grid */}
+      {/* Title Banner */}
+      <div className="bg-blue-600 text-white p-3 rounded-xl text-center shadow-lg mb-4">
+        <h1 className="text-xl font-semibold">Wallet Details</h1>
+        <p className="text-sm opacity-90 mt-1">
+          User Statistics & Registration
+        </p>
+      </div>
+
+      {/* Filters */}
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="relative">
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+          />
+        </div>
+        <div className="relative">
+          <select
+            value={monthFilter}
+            onChange={(e) => setMonthFilter(e.target.value)}
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Month</option>
+            {months.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+          <svg
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
+        <div className="relative">
+          <select
+            value={yearFilter}
+            onChange={(e) => setYearFilter(e.target.value)}
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+          <svg
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="space-y-3 pb-6">
+        {/* Top Stats - 2x2 Grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-green-600 text-white p-5 rounded-2xl shadow-md">
-            <h3 className="text-base font-normal mb-2">Total user</h3>
-            <p className="text-3xl font-bold">
-              {walletData.totalUsers.toLocaleString()}
-            </p>
+          <div className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 text-center">
+              <p className="text-gray-600 text-sm mb-1">Total Users</p>
+              <p className="text-green-600 text-3xl font-bold">
+                {walletData.totalUsers.toLocaleString()}
+              </p>
+            </div>
           </div>
 
-          <div className="bg-orange-500 text-white p-5 rounded-2xl shadow-md">
-            <h3 className="text-base font-normal mb-2">Today Register</h3>
-            <p className="text-3xl font-bold">{walletData.todayRegister}</p>
+          <div className="bg-white border-2 border-orange-500 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 text-center">
+              <p className="text-gray-600 text-sm mb-1">Today Register</p>
+              <p className="text-orange-600 text-3xl font-bold">
+                {walletData.todayRegister}
+              </p>
+            </div>
           </div>
 
-          <div className="bg-cyan-500 text-white p-5 rounded-2xl shadow-md">
-            <h3 className="text-base font-normal mb-2">
-              Yesterday
-              <br />
-              Register
-            </h3>
-            <p className="text-3xl font-bold">{walletData.yesterdayRegister}</p>
+          <div className="bg-white border-2 border-cyan-500 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 text-center">
+              <p className="text-gray-600 text-sm mb-1">Yesterday Register</p>
+              <p className="text-cyan-600 text-3xl font-bold">
+                {walletData.yesterdayRegister}
+              </p>
+            </div>
           </div>
 
-          <div className="bg-pink-600 text-white p-5 rounded-2xl shadow-md">
-            <h3 className="text-base font-normal mb-2">Current Week</h3>
-            <p className="text-3xl font-bold">
-              {walletData.currentWeekRegister}
-            </p>
+          <div className="bg-white border-2 border-pink-500 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 text-center">
+              <p className="text-gray-600 text-sm mb-1">Current Week</p>
+              <p className="text-pink-600 text-3xl font-bold">
+                {walletData.currentWeekRegister}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Daily Registration Card */}
-        <div className="bg-white rounded-2xl shadow-md p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <input
-                type="text"
-                value={walletData.dailyRegistration.date}
-                readOnly
-                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+        <div className="bg-white border-2 border-blue-500 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-blue-500 text-white px-4 py-2">
+            <h3 className="font-semibold">Daily Registration</h3>
+          </div>
+          <div className="p-4 flex items-center justify-between">
+            <div className="text-gray-700">
+              <p className="text-sm text-gray-500">Date</p>
+              <p className="font-medium">{walletData.dailyRegistration.date}</p>
             </div>
-            <div className="text-4xl font-bold text-blue-600 ml-4">
+            <p className="text-blue-600 text-3xl font-bold">
               {walletData.dailyRegistration.count}
-            </div>
+            </p>
           </div>
         </div>
 
         {/* Monthly Registration Card */}
-        <div className="bg-white rounded-2xl shadow-md p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 flex-1">
-              <select className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none">
-                <option>{walletData.monthlyRegistration.month}</option>
-              </select>
-              <select className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none">
-                <option>{walletData.monthlyRegistration.year}</option>
-              </select>
+        <div className="bg-white border-2 border-purple-500 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-purple-500 text-white px-4 py-2">
+            <h3 className="font-semibold">Monthly Registration</h3>
+          </div>
+          <div className="p-4 flex items-center justify-between">
+            <div className="text-gray-700">
+              <p className="text-sm text-gray-500">Period</p>
+              <p className="font-medium">
+                {walletData.monthlyRegistration.month}{" "}
+                {walletData.monthlyRegistration.year}
+              </p>
             </div>
-            <div className="text-4xl font-bold text-blue-600">
+            <p className="text-purple-600 text-3xl font-bold">
               {walletData.monthlyRegistration.count.toLocaleString()}
-            </div>
+            </p>
           </div>
         </div>
 
-        {/* User Activity Stats */}
-        <div className="bg-green-100 rounded-2xl shadow-md p-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-medium text-blue-700">
-              Play Active User
-            </h3>
-            <p className="text-4xl font-bold text-blue-700">
+        {/* Activity Stats */}
+        <div className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-green-500 text-white px-4 py-2">
+            <h3 className="font-semibold">Play Active Users</h3>
+          </div>
+          <div className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="text-gray-600">Currently Active</span>
+            </div>
+            <p className="text-green-600 text-3xl font-bold">
               {walletData.playActiveUsers}
             </p>
           </div>
         </div>
 
-        <div className="bg-pink-100 rounded-2xl shadow-md p-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-medium text-blue-700">
-              Play Inactive User
-            </h3>
-            <p className="text-4xl font-bold text-blue-700">
+        <div className="bg-white border-2 border-red-500 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-red-500 text-white px-4 py-2">
+            <h3 className="font-semibold">Play Inactive Users</h3>
+          </div>
+          <div className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 bg-red-500 rounded-full"></span>
+              <span className="text-gray-600">Currently Inactive</span>
+            </div>
+            <p className="text-red-600 text-3xl font-bold">
               {walletData.playInactiveUsers.toLocaleString()}
             </p>
           </div>
         </div>
 
-        <div className="bg-pink-100 rounded-2xl shadow-md p-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-medium text-blue-700">Block Device</h3>
-            <p className="text-4xl font-bold text-blue-700">
+        <div className="bg-white border-2 border-gray-500 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-gray-700 text-white px-4 py-2">
+            <h3 className="font-semibold">Block Devices</h3>
+          </div>
+          <div className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Blocked</span>
+            </div>
+            <p className="text-gray-700 text-3xl font-bold">
               {walletData.blockDevices}
             </p>
           </div>
         </div>
       </div>
+
+      {/* Export Buttons */}
+      <div className="mt-4">
+        <ExportButtons
+          onExportCSV={handleExportCSV}
+          onExportPDF={handleExportPDF}
+          disabled={false}
+        />
+      </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+          <div className="bg-gray-900 text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-2">
+            <span className="text-sm font-medium">{toastMessage}</span>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 });

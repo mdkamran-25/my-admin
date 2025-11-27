@@ -3,15 +3,17 @@
 interface StatCardProps {
   title: string;
   value: string | number;
-  color?: "blue" | "pink" | "green" | "orange";
+  color?: "blue" | "pink" | "green" | "orange" | "black" | "red";
   onClick?: () => void;
 }
 
 const colorClasses = {
-  blue: "bg-sky-500",
+  blue: "bg-blue-500",
   pink: "bg-pink-600",
-  green: "bg-cyan-500",
+  green: "bg-green-700",
   orange: "bg-orange-500",
+  black: "bg-black",
+  red: "bg-red-500",
 };
 
 export const StatCard = ({

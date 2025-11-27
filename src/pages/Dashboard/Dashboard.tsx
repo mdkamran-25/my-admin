@@ -107,33 +107,18 @@ export const Dashboard = memo(() => {
       <div className="flex flex-col gap-4">
         {/* Request Banners */}
         <div className="grid grid-cols-2 gap-3">
-          {/* Withdrawal Request Banner */}
-          <button
+          <StatCard
+            title="Withdraw Request"
+            value={overviewStats.withdrawRequests}
+            color="black"
             onClick={handleWithdrawClick}
-            className="bg-black text-white p-3 rounded-xl text-center shadow-lg hover:bg-gray-800 transition-colors w-full cursor-pointer active:scale-95"
-            type="button"
-          >
-            <h2 className="text-lg font-light mb-1 opacity-95">
-              Withdraw Request
-            </h2>
-            <p className="text-3xl font-bold">
-              {overviewStats.withdrawRequests}
-            </p>
-          </button>
-
-          {/* Deposit Request Banner */}
-          <button
+          />
+          <StatCard
+            title="Deposit Request"
+            value={overviewStats.depositRequests || 0}
+            color="black"
             onClick={handleDepositClick}
-            className="bg-green-600 text-white p-3 rounded-xl text-center shadow-lg hover:bg-green-700 transition-colors w-full cursor-pointer active:scale-95"
-            type="button"
-          >
-            <h2 className="text-lg font-light mb-1 opacity-95">
-              Deposit Request
-            </h2>
-            <p className="text-3xl font-bold">
-              {overviewStats.depositRequests || 0}
-            </p>
-          </button>
+          />
         </div>
 
         {/* Overview Stats Cards */}

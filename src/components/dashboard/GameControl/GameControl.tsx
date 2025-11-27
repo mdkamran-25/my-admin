@@ -40,7 +40,7 @@ export const GameControl = ({
         <span
           className={`px-6 py-2 rounded-full font-semibold text-sm ${
             currentStatus === "Active"
-              ? "bg-green-500 text-white"
+              ? "bg-green-700 text-white"
               : "bg-red-500 text-white"
           }`}
         >

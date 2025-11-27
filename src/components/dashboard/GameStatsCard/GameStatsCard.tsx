@@ -12,12 +12,12 @@ interface GameStatsCardProps {
 }
 
 const variantClasses: Record<string, string> = {
-  play: "bg-gradient-to-br from-green-700 to-green-600 text-white",
-  win: "bg-gradient-to-br from-red-600 to-orange-500 text-white",
-  profit: "bg-white text-green-700 border-2 border-gray-200",
-  add: "bg-gradient-to-br from-blue-700 to-blue-600 text-white",
-  withdraw: "bg-gradient-to-br from-red-700 to-red-600 text-white",
-  reject: "bg-gradient-to-br from-cyan-400 to-teal-300 text-white",
+  play: "bg-sky-700 text-white",
+  win: "bg-green-700 text-white",
+  profit: "bg-gray-900 text-white",
+  add: "bg-blue-800 text-white",
+  withdraw: "bg-red-800 text-white",
+  reject: "bg-cyan-700 text-white",
 };
 
 export const GameStatsCard = ({
