@@ -554,7 +554,7 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
       )}
 
       {/* Export Buttons */}
-      <div className="mt-4">
+      <div className="mt-4 flex justify-center">
         <ExportButtons
           onExportCSV={handleExportCSV}
           onExportPDF={handleExportPDF}

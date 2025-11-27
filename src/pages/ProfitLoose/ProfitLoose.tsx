@@ -309,7 +309,7 @@ export const ProfitLoose = memo(() => {
       </div>
 
       {/* Export Buttons */}
-      <div className="mt-4">
+      <div className="mt-4 flex justify-center">
         <ExportButtons
           onExportCSV={handleExportCSV}
           onExportPDF={handleExportPDF}
