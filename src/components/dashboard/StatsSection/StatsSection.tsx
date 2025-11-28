@@ -11,10 +11,18 @@ interface StatsSectionProps {
   total: number;
   emptyIcon?: string;
   emptyMessage?: string;
+  collapsibleOnMobile?: boolean;
 }
 
 export const StatsSection = memo<StatsSectionProps>(
-  ({ title, stats, total, emptyIcon, emptyMessage }) => {
+  ({
+    title,
+    stats,
+    total,
+    emptyIcon,
+    emptyMessage,
+    collapsibleOnMobile = true,
+  }) => {
     const hasData = total > 0;
 
     if (!hasData) {
@@ -35,6 +43,7 @@ export const StatsSection = memo<StatsSectionProps>(
         stats={stats}
         totalLabel={`Total ${title}`}
         totalValue={total}
+        collapsibleOnMobile={collapsibleOnMobile}
       />
     );
   }

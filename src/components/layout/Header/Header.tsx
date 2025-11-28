@@ -46,7 +46,7 @@ export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
           className="text-2xl font-light text-gray-900 hover:text-purple-600 transition-colors cursor-pointer"
           type="button"
         >
-          A23 Admin
+          A4 Ayan
         </button>
       </div>
 

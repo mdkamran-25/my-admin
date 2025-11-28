@@ -2,6 +2,7 @@
 
 import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowUp, FaArrowDown, FaUsers, FaWallet } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
 import { StatCard } from "../../components/common/StatCard";
 import { GameControl } from "../../components/dashboard/GameControl";
@@ -11,7 +12,6 @@ import { DashboardSkeleton } from "../../components/common/SkeletonLoaders";
 import { ErrorState } from "../../components/common/ErrorState";
 import { useDashboard } from "../../hooks/useDashboard";
 import {
-  mapOverviewToStatCards,
   mapPlayStats,
   mapProfitStats,
   mapAddMoneyStats,
@@ -85,7 +85,6 @@ export const Dashboard = memo(() => {
   }
 
   // Map data using helper utilities
-  const statCards = mapOverviewToStatCards(overviewStats);
   const playStatsArray = mapPlayStats(playStats);
   const winStatsArray = mapWinStats(winStats);
   const profitStatsArray = mapProfitStats(playStats, winStats);
@@ -102,18 +101,30 @@ export const Dashboard = memo(() => {
     <Layout
       onRefresh={handleRefresh}
       bgColor="bg-gray-200"
-      contentPadding="px-2 py-6"
+      contentPadding="px-4 py-6 sm:px-6"
     >
       <div className="flex flex-col gap-4">
-        {/* Request Banners */}
+        {/* Request Banners - 2 columns on all screen sizes */}
         <div className="grid grid-cols-2 gap-3">
           <StatCard
+            icon={
+              <div className="flex items-center gap-1">
+                <FaArrowDown className="text-sm font-extrabold" />
+                <span className="text-xl text-green-400 font-bold">₹</span>
+              </div>
+            }
             title="Withdraw Request"
             value={overviewStats.withdrawRequests}
             color="black"
             onClick={handleWithdrawClick}
           />
           <StatCard
+            icon={
+              <div className="flex items-center gap-1">
+                <FaArrowUp className="text-sm font-extrabold" />
+                <span className="text-xl text-green-400 font-bold">₹</span>
+              </div>
+            }
             title="Deposit Request"
             value={overviewStats.depositRequests || 0}
             color="black"
@@ -121,23 +132,22 @@ export const Dashboard = memo(() => {
           />
         </div>
 
-        {/* Overview Stats Cards */}
+        {/* Users and Wallet Amount - 2 columns matching request cards style */}
         <div className="grid grid-cols-2 gap-3">
-          {statCards.map((card) => (
-            <StatCard
-              key={card.title}
-              title={card.title}
-              value={card.value}
-              color={card.color}
-              onClick={
-                card.title === "Users"
-                  ? handleUsersClick
-                  : card.title === "Wallet Amount"
-                  ? handleWalletClick
-                  : undefined
-              }
-            />
-          ))}
+          <StatCard
+            icon={<FaUsers />}
+            title="Users"
+            value={overviewStats.totalUsers || 0}
+            color="blue"
+            onClick={handleUsersClick}
+          />
+          <StatCard
+            icon={<FaWallet />}
+            title="Wallet Amount"
+            value={overviewStats.walletAmount || 0}
+            color="green"
+            onClick={handleWalletClick}
+          />
         </div>
 
         {/* Game Control Section */}
@@ -151,6 +161,7 @@ export const Dashboard = memo(() => {
           title="Play"
           stats={playStatsArray}
           total={playStats?.totalPlay || 0}
+          collapsibleOnMobile={false}
         />
 
         {/* Win Statistics Section */}
@@ -161,6 +172,7 @@ export const Dashboard = memo(() => {
             stats={winStatsArray}
             totalLabel="Total Win"
             totalValue={winStats?.totalWin || 0}
+            collapsibleOnMobile={false}
           />
         </div>
 
@@ -172,6 +184,7 @@ export const Dashboard = memo(() => {
             stats={profitStatsArray}
             totalLabel="total Profit"
             totalValue={profitTotal}
+            collapsibleOnMobile={false}
           />
         </div>
 
@@ -183,6 +196,7 @@ export const Dashboard = memo(() => {
             stats={addMoneyStatsArray}
             totalLabel="Total"
             totalValue={overviewStats.addMoney?.total || 0}
+            collapsibleOnMobile={false}
           />
         </div>
 
@@ -194,6 +208,7 @@ export const Dashboard = memo(() => {
             stats={withdrawMoneyStatsArray}
             totalLabel="Total"
             totalValue={overviewStats.withdrawMoney?.total || 0}
+            collapsibleOnMobile={false}
           />
         </div>
 
@@ -204,6 +219,7 @@ export const Dashboard = memo(() => {
             variant="reject"
             stats={rejectStatsArray}
             totalLabel=""
+            collapsibleOnMobile={false}
           />
         </div>
       </div>
