@@ -28,13 +28,17 @@ export interface MockWithdrawRequest {
   amount: number;
   wallet: number;
   requestDate: string;
-  status: "Pending" | "Approved" | "Rejected";
+  status: "Pending" | "Processing" | "Approved" | "Rejected";
   type: "bank" | "upi";
   accountName: string;
   bankName: string;
   accountNumber: string;
   ifsc: string;
   upiId?: string;
+  notes?: string;
+  rejectedReason?: string;
+  processedAt?: string;
+  processedBy?: string;
 }
 
 export interface MockDepositRequest {

@@ -205,6 +205,35 @@ export const withdrawalApi = {
 
     return { success: false, error: "Withdrawal request not found" };
   },
+
+  // Update withdrawal status with notes
+  updateWithdrawalWithNotes: async (
+    id: string,
+    status: "Pending" | "Processing" | "Approved" | "Rejected",
+    notes?: string,
+    rejectedReason?: string
+  ): Promise<ApiResponse<MockWithdrawRequest>> => {
+    await delay(600);
+
+    const withdrawal = mockWithdrawRequests.find((w) => w.id === id);
+    if (withdrawal) {
+      const updated: MockWithdrawRequest = {
+        ...withdrawal,
+        status,
+        notes: notes || withdrawal.notes,
+        rejectedReason: rejectedReason || withdrawal.rejectedReason,
+        processedAt: new Date().toISOString(),
+        processedBy: "Admin", // In real app, would be current logged-in admin
+      };
+      return {
+        success: true,
+        data: updated,
+        message: `Withdrawal ${status.toLowerCase()}`,
+      };
+    }
+
+    return { success: false, error: "Withdrawal request not found" };
+  },
 };
 
 // Deposit API

@@ -16,7 +16,6 @@ import type { MockWithdrawRequest } from "../../services/mockData";
 export const WithdrawRequest = memo(() => {
   const navigate = useNavigate();
   const [dateFilter, setDateFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [notes, setNotes] = useState<{ [key: string]: string }>({});
@@ -60,6 +59,11 @@ export const WithdrawRequest = memo(() => {
 
   // Apply filters
   const filteredRequests = requests.filter((req) => {
+    // Only show Pending requests on this page
+    if (req.status !== "Pending") {
+      return false;
+    }
+
     // Date filter
     if (dateFilter) {
       const filterDate = new Date(dateFilter);
@@ -72,14 +76,6 @@ export const WithdrawRequest = memo(() => {
       )}/${filterDate.getFullYear()}`;
       const reqDate = req.requestDate.split(" ")[0];
       if (reqDate !== filterDateStr) return false;
-    }
-
-    // Status filter
-    if (
-      statusFilter &&
-      req.status.toLowerCase() !== statusFilter.toLowerCase()
-    ) {
-      return false;
     }
 
     // Search filter
@@ -196,6 +192,58 @@ BANK DETAILS
     showToastNotification("✅ Note saved successfully!");
   };
 
+  // Handle Approve Request
+  const handleApproveRequest = useCallback(
+    async (request: MockWithdrawRequest) => {
+      try {
+        setLoading(true);
+        const approvalNote = notes[request.id] || "";
+        await withdrawalApi.updateWithdrawalWithNotes(
+          request.id,
+          "Approved",
+          approvalNote
+        );
+        showToastNotification(
+          `✅ Request from ${request.name} approved successfully!`
+        );
+        setExpandedId(null); // Close the detail view
+        fetchWithdrawals(); // Refresh to remove approved request
+      } catch (error) {
+        console.error("Failed to approve request:", error);
+        showToastNotification("❌ Failed to approve request");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [notes, fetchWithdrawals]
+  );
+
+  // Handle Reject Request
+  const handleRejectRequest = useCallback(
+    async (request: MockWithdrawRequest) => {
+      try {
+        setLoading(true);
+        const rejectionNote = notes[request.id] || "";
+        await withdrawalApi.updateWithdrawalWithNotes(
+          request.id,
+          "Rejected",
+          rejectionNote
+        );
+        showToastNotification(
+          `✅ Request from ${request.name} rejected successfully!`
+        );
+        setExpandedId(null); // Close the detail view
+        fetchWithdrawals(); // Refresh to remove rejected request
+      } catch (error) {
+        console.error("Failed to reject request:", error);
+        showToastNotification("❌ Failed to reject request");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [notes, fetchWithdrawals]
+  );
+
   const totalAmount = filteredRequests.reduce(
     (sum, req) => sum + req.amount,
     0
@@ -277,31 +325,6 @@ BANK DETAILS
               Date
             </span>
           )}
-        </div>
-        <div className="relative">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-          <svg
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
         </div>
       </div>
 
@@ -515,7 +538,10 @@ BANK DETAILS
 
                   {/* Final Action Buttons */}
                   <div className="flex gap-2 mt-4">
-                    <button className="flex-1 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => handleApproveRequest(request)}
+                      className="flex-1 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -546,7 +572,10 @@ BANK DETAILS
                       </svg>
                     </button>
 
-                    <button className="flex-1 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => handleRejectRequest(request)}
+                      className="flex-1 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 flex items-center justify-center gap-2"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"

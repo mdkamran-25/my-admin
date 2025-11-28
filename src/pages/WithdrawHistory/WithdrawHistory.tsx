@@ -526,6 +526,39 @@ ${request.upiId ? `📲 UPI ID: ${request.upiId}` : ""}
                     </div>
                   </div>
 
+                  {/* Notes and Rejection Reason */}
+                  <div className="space-y-2 mt-4 border-t border-opacity-30 border-white pt-3">
+                    {request.notes && (
+                      <div className="bg-opacity-20 bg-white p-3 rounded">
+                        <span className="text-xs font-semibold block mb-1">
+                          📝 Notes:
+                        </span>
+                        <span className="text-sm">{request.notes}</span>
+                      </div>
+                    )}
+                    {request.rejectedReason && (
+                      <div className="bg-opacity-20 bg-red-400 p-3 rounded">
+                        <span className="text-xs font-semibold block mb-1">
+                          ❌ Rejection Reason:
+                        </span>
+                        <span className="text-sm">
+                          {request.rejectedReason}
+                        </span>
+                      </div>
+                    )}
+                    {request.processedAt && (
+                      <div className="text-xs text-gray-200">
+                        <span>
+                          🔄 Processed:{" "}
+                          {new Date(request.processedAt).toLocaleString()}
+                        </span>
+                        {request.processedBy && (
+                          <span className="ml-2">by {request.processedBy}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* WhatsApp Button */}
                   <div className="flex justify-center mt-4">
                     <button
