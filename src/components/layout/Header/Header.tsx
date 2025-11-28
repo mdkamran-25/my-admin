@@ -30,11 +30,11 @@ export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
   }, [isSpinning, onRefresh]);
 
   return (
-    <header className="sticky top-0 z-50 flex justify-between items-center h-14 px-4 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 flex justify-between items-center h-14 px-4 bg-black border-b border-gray-800">
       {/* Left Section */}
       <div className="flex items-center gap-1">
         <button
-          className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-purple-600 transition-colors"
+          className="w-10 h-10 flex items-center justify-center text-white hover:text-gray-300 transition-colors"
           aria-label="Open menu"
           type="button"
           onClick={onMenuClick}
@@ -43,7 +43,7 @@ export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
         </button>
         <button
           onClick={() => navigate("/")}
-          className="text-2xl font-light text-gray-900 hover:text-purple-600 transition-colors cursor-pointer"
+          className="text-2xl font-light text-white hover:text-gray-300 transition-colors cursor-pointer"
           type="button"
         >
           A4 Ayan
@@ -53,7 +53,7 @@ export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
       {/* Right Section */}
       <div className="flex items-center gap-4">
         {/* Date and Time Display */}
-        <div className="text-sm text-gray-600 text-right">
+        <div className="text-sm text-gray-300 text-right">
           <div>{currentDate}</div>
           <div>{currentTime}</div>
         </div>
@@ -61,7 +61,7 @@ export const Header = memo(({ onRefresh, onMenuClick }: HeaderProps) => {
         {/* Refresh Button */}
         {onRefresh && (
           <button
-            className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-purple-600 transition-colors disabled:opacity-50"
+            className="w-10 h-10 flex items-center justify-center text-white hover:text-gray-300 transition-colors disabled:opacity-50"
             onClick={handleRefresh}
             disabled={isSpinning}
             aria-label="Refresh data"

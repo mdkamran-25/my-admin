@@ -103,7 +103,7 @@ export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 w-64 pb-20 lg:pb-0 bg-white shadow-2xl z-30 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 w-64 pb-20 lg:pb-0 bg-amber-50 shadow-2xl z-30 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
@@ -134,7 +134,7 @@ export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left ${
                       isLogoutButton
-                        ? "bg-blue-900 text-white hover:bg-blue-800"
+                        ? "bg-black text-white hover:bg-gray-900"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >

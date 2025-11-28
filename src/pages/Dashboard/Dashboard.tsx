@@ -100,7 +100,7 @@ export const Dashboard = memo(() => {
   return (
     <Layout
       onRefresh={handleRefresh}
-      bgColor="bg-gray-200"
+      bgColor="bg-yellow-50"
       contentPadding="px-4 py-6 sm:px-6"
     >
       <div className="flex flex-col gap-4">
