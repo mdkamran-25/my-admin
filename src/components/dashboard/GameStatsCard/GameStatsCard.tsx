@@ -15,7 +15,7 @@ interface GameStatsCardProps {
 const variantClasses: Record<string, string> = {
   play: "bg-sky-700 text-white",
   win: "bg-green-700 text-white",
-  profit: "bg-gray-900 text-white",
+  profit: "bg-white text-black",
   add: "bg-blue-800 text-white",
   withdraw: "bg-red-800 text-white",
   reject: "bg-cyan-700 text-white",
