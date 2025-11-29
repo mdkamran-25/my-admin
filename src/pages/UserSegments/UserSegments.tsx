@@ -12,6 +12,7 @@ import { EmptyState } from "../../components/common/EmptyState";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
 import { userApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
+import { parseDate } from "../../utils/walletHelpers";
 import {
   RECORDS_PER_BLOCK_OPTIONS,
   USER_SEGMENT_LABELS,
@@ -23,6 +24,7 @@ export const UserSegments = memo(() => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const segment = (searchParams.get("segment") || "all") as UserSegment;
+  const dateParam = searchParams.get("date") || "";
 
   const [allUsers, setAllUsers] = useState<MockUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export const UserSegments = memo(() => {
   const [recordsPerBlock, setRecordsPerBlock] = useState("500");
   const pageSize = parseInt(recordsPerBlock);
   const [filters, setFilters] = useState({
-    date: "",
+    date: dateParam,
     status: "",
     search: "",
   });
@@ -53,23 +55,28 @@ export const UserSegments = memo(() => {
 
   // Apply segment-specific filtering
   const getSegmentFilteredUsers = (users: MockUser[]) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     switch (segment) {
       case "play-active":
-        // Users who have played recently (last active < 7 days)
+        // Users who have played recently (last active <= 7 days)
         return users.filter((user) => {
-          const lastActive = new Date(user.lastActiveDate);
-          const today = new Date();
-          const diffDays = Math.ceil(
+          const lastActive = parseDate(user.lastActiveDate);
+          if (!lastActive) return false;
+          lastActive.setHours(0, 0, 0, 0);
+          const diffDays = Math.floor(
             (today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
           );
           return diffDays <= 7 && user.status === "active";
         });
       case "play-inactive":
-        // Users who haven't played recently (last active >= 7 days)
+        // Users who haven't played recently (last active > 7 days)
         return users.filter((user) => {
-          const lastActive = new Date(user.lastActiveDate);
-          const today = new Date();
-          const diffDays = Math.ceil(
+          const lastActive = parseDate(user.lastActiveDate);
+          if (!lastActive) return false;
+          lastActive.setHours(0, 0, 0, 0);
+          const diffDays = Math.floor(
             (today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
           );
           return diffDays > 7;
@@ -86,11 +93,11 @@ export const UserSegments = memo(() => {
   const filteredUsers = getSegmentFilteredUsers(allUsers).filter((user) => {
     // Date filter
     if (filters.date) {
-      const filterDate = new Date(filters.date).toLocaleDateString();
-      const userDate = new Date(
-        user.registrationDate.split(" ")[0]
-      ).toLocaleDateString();
-      if (filterDate !== userDate) {
+      // Convert YYYY-MM-DD to DD/MM/YYYY for comparison
+      const [year, month, day] = filters.date.split("-");
+      const filterDateStr = `${day}/${month}/${year}`;
+      const userDateStr = user.registrationDate.split(" ")[0]; // Extract DD/MM/YYYY part
+      if (filterDateStr !== userDateStr) {
         return false;
       }
     }

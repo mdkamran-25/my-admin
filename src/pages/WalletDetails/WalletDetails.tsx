@@ -1,7 +1,7 @@
 // Wallet Details Page - User Statistics and Registration Data
 
-import { memo, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { memo, useState, useCallback, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
@@ -12,14 +12,17 @@ import {
   getYesterdayString,
   countRegistrationsByDate,
   getWeekRegistrations,
-  filterUsersByStatus,
   countBlockedDevices,
+  parseDate,
 } from "../../utils/walletHelpers";
 import { mockUsers } from "../../services/mockData";
 
 export const WalletDetails = memo(() => {
   const navigate = useNavigate();
-  const [dateFilter, setDateFilter] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dateParam = searchParams.get("date") || "";
+
+  const [dateFilter, setDateFilter] = useState(dateParam);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
@@ -32,6 +35,14 @@ export const WalletDetails = memo(() => {
     playInactiveUsers: 0,
     blockDevices: 0,
   });
+
+  // Auto-apply filter on page load if date param exists
+  useEffect(() => {
+    if (dateParam) {
+      setDateFilter(dateParam);
+      calculateStats();
+    }
+  }, []); // Only run on mount
 
   // Calculate stats based on selected date filter
   const calculateStats = useCallback(() => {
@@ -46,10 +57,30 @@ export const WalletDetails = memo(() => {
       );
     }
 
+    // Calculate play active/inactive users based on last active date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let activeUsers = 0;
+    let inactiveUsers = 0;
+
+    filteredUsers.forEach((user) => {
+      const lastActive = parseDate(user.lastActiveDate);
+      if (lastActive) {
+        lastActive.setHours(0, 0, 0, 0);
+        const diffDays = Math.floor(
+          (today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        if (diffDays <= 7 && user.status === "active") {
+          activeUsers++;
+        } else if (diffDays > 7) {
+          inactiveUsers++;
+        }
+      }
+    });
+
     // Calculate statistics from filtered users
     const totalUsers = filteredUsers.length;
-    const activeUsers = filterUsersByStatus(filteredUsers, "active").length;
-    const inactiveUsers = filterUsersByStatus(filteredUsers, "inactive").length;
     const blockedDevicesCount = countBlockedDevices(filteredUsers);
 
     // Get today and yesterday registrations (always from current date)
@@ -77,12 +108,19 @@ export const WalletDetails = memo(() => {
   const handleApplyFilter = useCallback(() => {
     setIsFiltering(true);
     calculateStats();
+    // Persist date filter in URL
+    if (dateFilter) {
+      setSearchParams({ date: dateFilter });
+    } else {
+      setSearchParams({});
+    }
     setIsFiltering(false);
     showToastNotification("Filter applied successfully!");
-  }, [dateFilter, calculateStats]);
+  }, [dateFilter, calculateStats, setSearchParams]);
 
   const handleResetFilters = useCallback(() => {
     setDateFilter("");
+    setSearchParams({}); // Clear URL params
     setWalletData({
       totalUsers: 0,
       todayRegister: 0,
@@ -93,7 +131,7 @@ export const WalletDetails = memo(() => {
       blockDevices: 0,
     });
     showToastNotification("Filters reset");
-  }, []);
+  }, [setSearchParams]);
 
   const showToastNotification = (message: string) => {
     setToastMessage(message);
@@ -276,7 +314,12 @@ export const WalletDetails = memo(() => {
         {/* Activity Stats */}
         <div
           className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/user-segments?segment=play-active")}
+          onClick={() => {
+            const url = dateFilter
+              ? `/user-segments?segment=play-active&date=${dateFilter}`
+              : "/user-segments?segment=play-active";
+            navigate(url);
+          }}
         >
           <div className="bg-green-500 text-white px-4 py-2">
             <h3 className="font-semibold">Play Active Users</h3>
@@ -294,7 +337,12 @@ export const WalletDetails = memo(() => {
 
         <div
           className="bg-white border-2 border-red-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/user-segments?segment=play-inactive")}
+          onClick={() => {
+            const url = dateFilter
+              ? `/user-segments?segment=play-inactive&date=${dateFilter}`
+              : "/user-segments?segment=play-inactive";
+            navigate(url);
+          }}
         >
           <div className="bg-red-500 text-white px-4 py-2">
             <h3 className="font-semibold">Play Inactive Users</h3>
@@ -312,7 +360,12 @@ export const WalletDetails = memo(() => {
 
         <div
           className="bg-white border-2 border-gray-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/user-segments?segment=block-devices")}
+          onClick={() => {
+            const url = dateFilter
+              ? `/user-segments?segment=block-devices&date=${dateFilter}`
+              : "/user-segments?segment=block-devices";
+            navigate(url);
+          }}
         >
           <div className="bg-gray-700 text-white px-4 py-2">
             <h3 className="font-semibold">Block Devices</h3>
