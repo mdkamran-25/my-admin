@@ -274,7 +274,15 @@ export const WalletDetails = memo(() => {
       <div className="space-y-3 pb-6">
         {/* Top Stats - 2x2 Grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm">
+          <div
+            className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => {
+              const url = dateFilter
+                ? `/user-profit-loss?date=${dateFilter}`
+                : "/user-profit-loss";
+              navigate(url);
+            }}
+          >
             <div className="p-4 text-center">
               <p className="text-gray-600 text-sm mb-1">Total Users</p>
               <p className="text-green-600 text-3xl font-bold">

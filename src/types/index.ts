@@ -197,3 +197,16 @@ export interface WalletDetailsData {
   playInactiveUsers: number;
   blockDevices: number;
 }
+
+export interface UserProfitLossData {
+  id: string;
+  sn: number;
+  username: string;
+  play: number;
+  win: number;
+  profitLoss: number;
+  addMoney: number;
+  withdrawMoney: number;
+  points: number;
+  userId: string;
+}
