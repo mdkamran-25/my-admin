@@ -95,9 +95,16 @@ export const GameReport = memo(() => {
             className="w-full px-4 py-3 border border-gray-300 rounded-full text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
           >
             <option value="all">All Game</option>
-            <option value="kalyan">Kalyan</option>
-            <option value="milan">Milan</option>
-            <option value="rajdhani">Rajdhani</option>
+            <option value="sridevi">SRIDEVI</option>
+            <option value="time-bazar">TIME BAZAR</option>
+            <option value="madhur-day">MADHUR DAY</option>
+            <option value="milan-day">MILAN DAY</option>
+            <option value="rajdhani-day">RAJDHANI DAY</option>
+            <option value="supreme-day">SUPREME DAY</option>
+            <option value="kalyan">KALYAN</option>
+            <option value="golden-day">GOLDEN DAY</option>
+            <option value="sridevi-night">SRIDEVI NIGHT</option>
+            <option value="madhur-night">MADHUR NIGHT</option>
           </select>
         </div>
 
