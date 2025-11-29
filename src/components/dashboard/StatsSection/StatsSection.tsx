@@ -12,6 +12,7 @@ interface StatsSectionProps {
   emptyIcon?: string;
   emptyMessage?: string;
   collapsibleOnMobile?: boolean;
+  onClick?: () => void;
 }
 
 export const StatsSection = memo<StatsSectionProps>(
@@ -22,6 +23,7 @@ export const StatsSection = memo<StatsSectionProps>(
     emptyIcon,
     emptyMessage,
     collapsibleOnMobile = true,
+    onClick,
   }) => {
     const hasData = total > 0;
 
@@ -37,14 +39,16 @@ export const StatsSection = memo<StatsSectionProps>(
     }
 
     return (
-      <GameStatsCard
-        title={title}
-        variant={title.toLowerCase() as "play" | "win"}
-        stats={stats}
-        totalLabel={`Total ${title}`}
-        totalValue={total}
-        collapsibleOnMobile={collapsibleOnMobile}
-      />
+      <div onClick={onClick} className={onClick ? "cursor-pointer" : ""}>
+        <GameStatsCard
+          title={title}
+          variant={title.toLowerCase() as "play" | "win"}
+          stats={stats}
+          totalLabel={`Total ${title}`}
+          totalValue={total}
+          collapsibleOnMobile={collapsibleOnMobile}
+        />
+      </div>
     );
   }
 );

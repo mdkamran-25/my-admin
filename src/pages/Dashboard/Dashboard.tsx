@@ -62,6 +62,10 @@ export const Dashboard = memo(() => {
     navigate("/add-money-history");
   }, [navigate]);
 
+  const handlePlayClick = useCallback(() => {
+    navigate("/game-report");
+  }, [navigate]);
+
   // Loading State
   if (loading) {
     return (
@@ -166,6 +170,7 @@ export const Dashboard = memo(() => {
           stats={playStatsArray}
           total={playStats?.totalPlay || 0}
           collapsibleOnMobile={false}
+          onClick={handlePlayClick}
         />
 
         {/* Win Statistics Section */}
