@@ -10,12 +10,17 @@ import {
   getUserWithdrawRequests,
   getUserGamePlays,
   getUserActivityLogs,
-  type MockUser,
-  type MockWithdrawRequest,
-  type MockDepositRequest,
-  type MockGamePlay,
-  type MockActivityLog,
+  getUserProfileDetails,
+  updateUserProfileDetails,
 } from "./mockData";
+import type {
+  MockUser,
+  MockWithdrawRequest,
+  MockDepositRequest,
+  MockGamePlay,
+  MockActivityLog,
+  UserProfile,
+} from "../types";
 
 // Simulate network delay
 const delay = (ms: number = 500) =>
@@ -41,6 +46,26 @@ export interface PaginatedResponse<T> {
 }
 
 // User API
+type UpdateUserProfileFn = (
+  id: string,
+  updates: Partial<UserProfile>
+) => Promise<ApiResponse<UserProfile>>;
+
+const updateUserProfileHandler: UpdateUserProfileFn = async (id, updates) => {
+  await delay(600);
+
+  const updatedProfile = updateUserProfileDetails(id, updates);
+  if (updatedProfile) {
+    return {
+      success: true,
+      data: updatedProfile,
+      message: "User updated successfully",
+    };
+  }
+
+  return { success: false, error: "User not found" };
+};
+
 export const userApi = {
   // Get all users
   getUsers: async (
@@ -66,12 +91,12 @@ export const userApi = {
   },
 
   // Get user by ID
-  getUserById: async (id: string): Promise<ApiResponse<MockUser>> => {
+  getUserById: async (id: string): Promise<ApiResponse<UserProfile>> => {
     await delay(300);
 
-    const user = getUserById(id);
-    if (user) {
-      return { success: true, data: user };
+    const profile = getUserProfileDetails(id);
+    if (profile) {
+      return { success: true, data: profile };
     }
 
     return { success: false, error: "User not found" };
@@ -93,47 +118,35 @@ export const userApi = {
     return { success: true, data: results };
   },
 
-  // Update user
-  updateUser: async (
-    id: string,
-    updates: Partial<MockUser>
-  ): Promise<ApiResponse<MockUser>> => {
-    await delay(600);
+  // Update user profile
+  updateUserProfile: updateUserProfileHandler,
 
-    const user = getUserById(id);
-    if (user) {
-      const updatedUser = { ...user, ...updates };
-      return {
-        success: true,
-        data: updatedUser,
-        message: "User updated successfully",
-      };
-    }
-
-    return { success: false, error: "User not found" };
-  },
+  updateUser: updateUserProfileHandler,
 
   // Block/Unblock user
-  toggleUserStatus: async (id: string): Promise<ApiResponse<MockUser>> => {
+  toggleUserStatus: async (id: string): Promise<ApiResponse<UserProfile>> => {
     await delay(500);
 
-    const user = getUserById(id);
-    if (user) {
-      const updatedUser = {
-        ...user,
-        status:
-          user.status === "active"
-            ? ("inactive" as const)
-            : ("active" as const),
-      };
-      return {
-        success: true,
-        data: updatedUser,
-        message: "User status updated",
-      };
+    const baseUser = getUserById(id);
+    if (!baseUser) {
+      return { success: false, error: "User not found" };
     }
 
-    return { success: false, error: "User not found" };
+    const nextStatus =
+      baseUser.status === "active"
+        ? ("inactive" as const)
+        : ("active" as const);
+
+    const updatedProfile = updateUserProfileDetails(id, { status: nextStatus });
+    if (!updatedProfile) {
+      return { success: false, error: "User not found" };
+    }
+
+    return {
+      success: true,
+      data: updatedProfile,
+      message: "User status updated",
+    };
   },
 };
 

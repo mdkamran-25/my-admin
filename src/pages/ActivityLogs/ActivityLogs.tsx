@@ -10,7 +10,7 @@ import { EmptyState } from "../../components/common/EmptyState";
 import { ActivityCardSkeleton } from "../../components/common/SkeletonLoaders";
 import { activityApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
-import type { MockActivityLog } from "../../services/mockData";
+import type { MockActivityLog } from "../../types";
 
 export const ActivityLogs = memo(() => {
   const [activityLogs, setActivityLogs] = useState<MockActivityLog[]>([]);

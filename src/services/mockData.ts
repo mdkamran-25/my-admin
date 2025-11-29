@@ -1,87 +1,15 @@
 // Centralized mock data for testing across all pages
 
-export interface MockUser {
-  id: string;
-  sn: number;
-  username: string;
-  name: string;
-  phone: string;
-  email: string;
-  points: number;
-  wallet: number;
-  registrationDate: string;
-  lastActiveDate: string;
-  status: "active" | "inactive";
-  inactiveDays: number;
-  hasWhatsapp: boolean;
-  city: string;
-  state: string;
-  deviceBlocked: boolean;
-}
-
-export interface MockWithdrawRequest {
-  id: string;
-  userId: string;
-  phone: string;
-  name: string;
-  username: string;
-  amount: number;
-  wallet: number;
-  requestDate: string;
-  status: "Pending" | "Processing" | "Approved" | "Rejected";
-  type: "bank" | "upi";
-  accountName: string;
-  bankName: string;
-  accountNumber: string;
-  ifsc: string;
-  upiId?: string;
-  notes?: string;
-  rejectedReason?: string;
-  processedAt?: string;
-  processedBy?: string;
-}
-
-export interface MockDepositRequest {
-  id: string;
-  userId: string;
-  phone: string;
-  name: string;
-  username: string;
-  amount: number;
-  wallet: number;
-  requestDate: string;
-  status: "Pending" | "Approved" | "Rejected";
-  paymentMethod: "upi" | "bank" | "card";
-  transactionId: string;
-  upiId?: string;
-}
-
-export interface MockGamePlay {
-  id: string;
-  userId: string;
-  username: string;
-  phone: string;
-  gameType: "main" | "starline";
-  gameName: string;
-  marketType: string;
-  bidNumber: string;
-  bidAmount: number;
-  winAmount: number;
-  playDate: string;
-  playTime: string;
-  status: "win" | "lose" | "pending";
-}
-
-export interface MockActivityLog {
-  id: string;
-  userId: string;
-  username: string;
-  phone: string;
-  activity: string;
-  timestamp: string;
-  ipAddress: string;
-  device: string;
-}
+import { GAME_BLOCK_OPTIONS, LOGIN_ROLES } from "../constants";
+import type {
+  MockUser,
+  MockWithdrawRequest,
+  MockDepositRequest,
+  MockGamePlay,
+  MockActivityLog,
+  UserProfile,
+  UserProfileExtras,
+} from "../types";
 
 // Generate 50 consistent mock users
 export const mockUsers: MockUser[] = [
@@ -1248,6 +1176,150 @@ const generateActivityLogs = (): MockActivityLog[] => {
 };
 
 export const mockActivityLogs: MockActivityLog[] = generateActivityLogs();
+
+const BANK_NAMES = [
+  "State Bank of India",
+  "HDFC Bank",
+  "ICICI Bank",
+  "Axis Bank",
+  "Punjab National Bank",
+  "Bank of Baroda",
+];
+
+const DEVICE_BRANDS = [
+  "Apple",
+  "Samsung",
+  "OnePlus",
+  "Google",
+  "Xiaomi",
+  "Vivo",
+];
+
+const DEVICE_MODELS = [
+  "iPhone 15 Pro",
+  "Galaxy S23 Ultra",
+  "OnePlus 11R",
+  "Pixel 8 Pro",
+  "Xiaomi 13 Pro",
+  "Vivo X90",
+];
+
+const WALLET_POINT_VALUE = 0.5;
+
+const buildAccountNumber = (index: number) =>
+  `6005${(88000000 + index).toString().padStart(6, "0")}`;
+const buildIfsc = (index: number) =>
+  `MAHB000${(500 + index).toString().padStart(3, "0")}`;
+const buildDeviceId = (index: number, model: string) =>
+  `AP3A.${240600 + index}.${model.toUpperCase()}`;
+
+const createProfileExtrasForUser = (
+  user: MockUser,
+  index: number
+): UserProfileExtras => {
+  const bankName = BANK_NAMES[index % BANK_NAMES.length];
+  const brand = DEVICE_BRANDS[index % DEVICE_BRANDS.length];
+  const model = DEVICE_MODELS[index % DEVICE_MODELS.length];
+  const loginRole = LOGIN_ROLES[index % LOGIN_ROLES.length];
+  const blockedGames = GAME_BLOCK_OPTIONS.filter(
+    (_, optionIndex) => optionIndex % ((index % 3) + 2) === 0
+  );
+
+  return {
+    password: `${81000 + index}`,
+    loginRole,
+    walletPointValue: WALLET_POINT_VALUE,
+    bankDetails: {
+      accountHolder: user.name,
+      bankName,
+      accountNumber: buildAccountNumber(index),
+      ifsc: buildIfsc(index),
+    },
+    deviceInfo: {
+      brand,
+      model,
+      deviceId: buildDeviceId(index, model),
+      lastLoginTime: `${user.lastActiveDate} ${8 + (index % 4)}:${(
+        30 +
+        (index % 20)
+      )
+        .toString()
+        .padStart(2, "0")} ${index % 2 === 0 ? "AM" : "PM"}`,
+      status: user.deviceBlocked ? "blocked" : "active",
+    },
+    blockedGames,
+  };
+};
+
+const userProfileExtras: Record<string, UserProfileExtras> = {};
+mockUsers.forEach((user, index) => {
+  userProfileExtras[user.id] = createProfileExtrasForUser(user, index);
+});
+
+const ensureProfileExtras = (
+  user: MockUser,
+  index: number
+): UserProfileExtras => {
+  if (!userProfileExtras[user.id]) {
+    userProfileExtras[user.id] = createProfileExtrasForUser(user, index);
+  }
+  return userProfileExtras[user.id];
+};
+
+const buildUserProfile = (user: MockUser, index: number): UserProfile => {
+  const extras = ensureProfileExtras(user, index);
+  return { ...user, ...extras };
+};
+
+export const getUserProfileDetails = (id: string): UserProfile | undefined => {
+  const index = mockUsers.findIndex((user) => user.id === id);
+  if (index === -1) return undefined;
+  return buildUserProfile(mockUsers[index], index);
+};
+
+export const updateUserProfileDetails = (
+  id: string,
+  updates: Partial<UserProfile>
+): UserProfile | undefined => {
+  const index = mockUsers.findIndex((user) => user.id === id);
+  if (index === -1) return undefined;
+
+  const {
+    password,
+    loginRole,
+    walletPointValue,
+    bankDetails,
+    deviceInfo,
+    blockedGames,
+    ...baseUpdates
+  } = updates;
+
+  mockUsers[index] = { ...mockUsers[index], ...baseUpdates };
+
+  const currentExtras = ensureProfileExtras(mockUsers[index], index);
+  const nextBankDetails = bankDetails
+    ? { ...currentExtras.bankDetails, ...bankDetails }
+    : { ...currentExtras.bankDetails };
+  const nextDeviceInfo = deviceInfo
+    ? { ...currentExtras.deviceInfo, ...deviceInfo }
+    : { ...currentExtras.deviceInfo };
+  const nextBlockedGames =
+    blockedGames !== undefined
+      ? [...blockedGames]
+      : [...currentExtras.blockedGames];
+
+  userProfileExtras[id] = {
+    ...currentExtras,
+    password: password ?? currentExtras.password,
+    loginRole: loginRole ?? currentExtras.loginRole,
+    walletPointValue: walletPointValue ?? currentExtras.walletPointValue,
+    bankDetails: nextBankDetails,
+    deviceInfo: nextDeviceInfo,
+    blockedGames: nextBlockedGames,
+  };
+
+  return buildUserProfile(mockUsers[index], index);
+};
 
 // Utility functions
 export const getUserById = (id: string): MockUser | undefined => {

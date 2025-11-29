@@ -1,6 +1,6 @@
 // Utility functions for wallet details filtering and statistics calculation
 
-import type { MockUser } from "../services/mockData";
+import type { MockUser } from "../types";
 
 /**
  * Parse date string in DD/MM/YYYY format to Date object

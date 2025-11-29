@@ -11,7 +11,7 @@ import { EmptyState } from "../../components/common/EmptyState";
 import { RequestCardSkeleton } from "../../components/common/SkeletonLoaders";
 import { withdrawalApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
-import type { MockWithdrawRequest } from "../../services/mockData";
+import type { MockWithdrawRequest } from "../../types";
 
 export const WithdrawHistory = memo(() => {
   const navigate = useNavigate();

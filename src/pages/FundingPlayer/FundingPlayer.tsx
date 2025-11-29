@@ -11,7 +11,7 @@ import { EmptyState } from "../../components/common/EmptyState";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
 import { userApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
-import type { MockUser } from "../../services/mockData";
+import type { MockUser } from "../../types";
 
 export const FundingPlayer = memo(() => {
   const navigate = useNavigate();
