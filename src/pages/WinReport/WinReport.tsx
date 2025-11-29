@@ -1,4 +1,4 @@
-// Game Report Page - Shows bids and wins by game type
+// Win Report Page - Shows wins by game type
 
 import { memo, useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -26,7 +26,7 @@ const generateMockGameData = (): GameTypeData[] => {
   ];
 };
 
-export const GameReport = memo(() => {
+export const WinReport = memo(() => {
   const [searchParams] = useSearchParams();
   const dateParam = searchParams.get("date") || "";
 
@@ -162,56 +162,30 @@ export const GameReport = memo(() => {
         <EmptyState message="No data found" />
       )}
 
-      {/* Game Data Table */}
+      {/* Data Table */}
       {!loading && gameData.length > 0 && (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              {/* Table Header */}
-              <thead className="bg-black text-white">
-                <tr>
-                  <th className="px-4 py-3 text-center text-sm font-semibold">
-                    Game Type
-                  </th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold">
-                    Bids
-                  </th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold">
-                    Win
-                  </th>
-                </tr>
-              </thead>
-
-              {/* Table Body */}
-              <tbody className="divide-y divide-gray-200">
-                {gameData.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    {/* Game Type */}
-                    <td className="px-4 py-4 text-gray-900 font-medium text-center">
-                      {item.gameType}
-                    </td>
-
-                    {/* Bids */}
-                    <td className="px-4 py-4 text-center text-gray-900 font-semibold">
-                      {item.bids}
-                    </td>
-
-                    {/* Win */}
-                    <td className="px-4 py-4 text-center text-gray-900 font-semibold">
-                      {item.win}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="space-y-3">
+          {gameData.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-sm overflow-hidden"
+            >
+              <div className="bg-black text-white grid grid-cols-3 p-3 text-sm font-semibold">
+                <div className="text-left">Game Type</div>
+                <div className="text-center">Bids</div>
+                <div className="text-center">Win</div>
+              </div>
+              <div className="grid grid-cols-3 p-3 items-center text-sm">
+                <div className="text-left font-medium">{item.gameType}</div>
+                <div className="text-center font-semibold">{item.bids}</div>
+                <div className="text-center font-semibold">{item.win}</div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </Layout>
   );
 });
 
-GameReport.displayName = "GameReport";
+WinReport.displayName = "WinReport";

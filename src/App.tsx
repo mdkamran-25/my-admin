@@ -10,6 +10,7 @@ import { WalletDetails } from "./pages/WalletDetails";
 import { AddMoneyHistory } from "./pages/AddMoneyHistory";
 import { UserProfitLoss } from "./pages/UserProfitLoss";
 import { GameReport } from "./pages/GameReport";
+import { WinReport } from "./pages/WinReport";
 import { ProfitLoose } from "./pages/ProfitLoose";
 import { ProfitLooseStarline } from "./pages/ProfitLooseStarline";
 import { ResultReport } from "./pages/ResultReport";
@@ -53,6 +54,7 @@ function App() {
         <Route path="/add-money-history" element={<AddMoneyHistory />} />
         <Route path="/user-profit-loss" element={<UserProfitLoss />} />
         <Route path="/game-report" element={<GameReport />} />
+        <Route path="/win-report" element={<WinReport />} />
         <Route path="/profit-loose" element={<ProfitLoose />} />
         <Route
           path="/profit-loose-starline"

@@ -7,7 +7,6 @@ import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { EmptyState } from "../../components/common/EmptyState";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
-import { useGlobalStore } from "../../store/useGlobalStore";
 import type { UserProfitLossData } from "../../types";
 
 // Mock data generator
@@ -55,7 +54,6 @@ const mockData = generateMockProfitLossData();
 
 export const UserProfitLoss = memo(() => {
   const navigate = useNavigate();
-  const addToast = useGlobalStore((state) => state.addToast);
   const [searchParams] = useSearchParams();
   const dateParam = searchParams.get("date") || "";
 
@@ -83,9 +81,8 @@ export const UserProfitLoss = memo(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      addToast({ message: "Data refreshed", type: "success" });
     }, 500);
-  }, [addToast]);
+  }, []);
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "";

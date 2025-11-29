@@ -66,6 +66,10 @@ export const Dashboard = memo(() => {
     navigate("/game-report");
   }, [navigate]);
 
+  const handleWinClick = useCallback(() => {
+    navigate("/win-report");
+  }, [navigate]);
+
   // Loading State
   if (loading) {
     return (
@@ -174,7 +178,7 @@ export const Dashboard = memo(() => {
         />
 
         {/* Win Statistics Section */}
-        <div>
+        <div onClick={handleWinClick} className="cursor-pointer">
           <GameStatsCard
             title="Win"
             variant="win"

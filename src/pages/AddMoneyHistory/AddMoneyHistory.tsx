@@ -166,7 +166,6 @@ export const AddMoneyHistory = memo(() => {
 
   const handleApplyFilter = () => {
     setCurrentPage(1);
-    addToast({ message: "Filters applied", type: "success" });
   };
 
   const handleMethodFilter = (method: string) => {
@@ -201,9 +200,8 @@ export const AddMoneyHistory = memo(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      addToast({ message: "Data refreshed", type: "success" });
     }, 500);
-  }, [addToast]);
+  }, []);
 
   return (
     <Layout onRefresh={handleRefresh}>
