@@ -15,6 +15,16 @@ interface GameData {
   isProfit: boolean;
 }
 
+interface GameTypeDetails {
+  singleAnk: { totalAmount: number; giveAmount: number };
+  jodi: { totalAmount: number; giveAmount: number };
+  singlePana: { totalAmount: number; giveAmount: number };
+  doublePana: { totalAmount: number; giveAmount: number };
+  triplePana: { totalAmount: number; giveAmount: number };
+  halfSangam: { totalAmount: number; giveAmount: number };
+  fullSangam: { totalAmount: number; giveAmount: number };
+}
+
 // Mock data - in production this would be computed from game plays API
 const mockGames: GameData[] = [
   {
@@ -105,6 +115,20 @@ export const ProfitLoose = memo(() => {
   const [selectedStatus, setSelectedStatus] = useState("Open-close");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Mock game type details for when a specific game is selected
+  const getGameTypeDetails = (): GameTypeDetails => {
+    // Mock data - in production this would come from API based on selected game and date
+    return {
+      singleAnk: { totalAmount: 0, giveAmount: 0 },
+      jodi: { totalAmount: 0, giveAmount: 0 },
+      singlePana: { totalAmount: 0, giveAmount: 0 },
+      doublePana: { totalAmount: 0, giveAmount: 0 },
+      triplePana: { totalAmount: 0, giveAmount: 0 },
+      halfSangam: { totalAmount: 0, giveAmount: 0 },
+      fullSangam: { totalAmount: 0, giveAmount: 0 },
+    };
+  };
+
   // Filter games
   const filteredGames = mockGames.filter((game) => {
     if (selectedGame !== "All Game" && game.name !== selectedGame) return false;
@@ -115,6 +139,9 @@ export const ProfitLoose = memo(() => {
       return false;
     return true;
   });
+
+  const selectedGameData = filteredGames.find((g) => g.name === selectedGame);
+  const gameTypeDetails = selectedGame !== "All Game" ? getGameTypeDetails() : null;
 
   // Calculate totals
   const totalBids = filteredGames.reduce((sum, game) => sum + game.bids, 0);
@@ -316,6 +343,201 @@ export const ProfitLoose = memo(() => {
           disabled={filteredGames.length === 0}
         />
       </div>
+
+      {/* Game Type Details - Show when specific game is selected */}
+      {selectedGame !== "All Game" && selectedGameData && gameTypeDetails && (
+        <div className="mt-6 bg-white rounded-xl shadow-lg p-6">
+          {/* Game Header */}
+          <div className="bg-gray-100 rounded-lg p-4 mb-4 text-center">
+            <h3 className="text-lg font-bold text-gray-800">
+              {selectedGameData.name}, {selectedStatus}, {selectedDate}
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Play : {selectedGameData.bids} , Win : {selectedGameData.win}
+            </p>
+            <p className="text-sm text-gray-600">
+              Result : ***-**-***
+            </p>
+          </div>
+
+          {/* Set Button */}
+          <div className="flex justify-end mb-4">
+            <button className="px-6 py-2 bg-gray-600 text-white rounded-lg text-sm font-semibold hover:bg-gray-700 transition-colors">
+              Set
+            </button>
+          </div>
+
+          {/* Game Types Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100 border-b-2 border-gray-300">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                    Game
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                    Total Amount
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                    Give Amount
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {/* Single Ank */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Single Ank
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.singleAnk.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.singleAnk.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Jodi */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Jodi
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.jodi.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.jodi.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Single Pana */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Single Pana
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.singlePana.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.singlePana.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Double Pana */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Double Pana
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.doublePana.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.doublePana.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Triple Pana */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Triple Pana
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.triplePana.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.triplePana.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Half Sangam */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Half Sangam
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.halfSangam.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.halfSangam.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Full Sangam */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    Full Sangam
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.fullSangam.totalAmount}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-700">
+                    {gameTypeDetails.fullSangam.giveAmount}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button className="w-12 h-12 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center text-white transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 });
