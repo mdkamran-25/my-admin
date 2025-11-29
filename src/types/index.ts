@@ -51,3 +51,13 @@ export interface GameStatItem {
   label: string;
   value: number;
 }
+
+export interface WalletDetailsData {
+  totalUsers: number;
+  todayRegister: number;
+  yesterdayRegister: number;
+  currentWeekRegister: number;
+  playActiveUsers: number;
+  playInactiveUsers: number;
+  blockDevices: number;
+}

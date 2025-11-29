@@ -5,50 +5,93 @@ import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
+import type { WalletDetailsData } from "../../types";
+import {
+  getTodayString,
+  getYesterdayString,
+  countRegistrationsByDate,
+  getWeekRegistrations,
+  filterUsersByStatus,
+  countBlockedDevices,
+} from "../../utils/walletHelpers";
+import { mockUsers } from "../../services/mockData";
 
 export const WalletDetails = memo(() => {
   const [dateFilter, setDateFilter] = useState("");
-  const [monthFilter, setMonthFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState("2025");
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [walletData, setWalletData] = useState<WalletDetailsData>({
+    totalUsers: 0,
+    todayRegister: 0,
+    yesterdayRegister: 0,
+    currentWeekRegister: 0,
+    playActiveUsers: 0,
+    playInactiveUsers: 0,
+    blockDevices: 0,
+  });
 
-  // Mock data - replace with actual API call
-  const walletData = {
-    totalUsers: 18917,
-    todayRegister: 5,
-    yesterdayRegister: 96,
-    currentWeekRegister: 5,
-    dailyRegistration: {
-      date: "24/11/2025",
-      count: 5,
-    },
-    monthlyRegistration: {
-      month: "Nov",
-      year: 2025,
-      count: 2675,
-    },
-    playActiveUsers: 48,
-    playInactiveUsers: 18869,
-    blockDevices: 27,
-  };
+  // Calculate stats based on selected date filter
+  const calculateStats = useCallback(() => {
+    let filteredUsers = mockUsers;
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+    // Apply date filter if set
+    if (dateFilter) {
+      const [year, month, day] = dateFilter.split("-");
+      const filterDateStr = `${day}/${month}/${year}`;
+      filteredUsers = mockUsers.filter(
+        (u) => u.registrationDate === filterDateStr
+      );
+    }
 
-  const years = ["2023", "2024", "2025", "2026"];
+    // Calculate statistics from filtered users
+    const totalUsers = filteredUsers.length;
+    const activeUsers = filterUsersByStatus(filteredUsers, "active").length;
+    const inactiveUsers = filterUsersByStatus(filteredUsers, "inactive").length;
+    const blockedDevicesCount = countBlockedDevices(filteredUsers);
+
+    // Get today and yesterday registrations (always from current date)
+    const todayStr = getTodayString();
+    const yesterdayStr = getYesterdayString();
+    const todayCount = countRegistrationsByDate(mockUsers, todayStr);
+    const yesterdayCount = countRegistrationsByDate(mockUsers, yesterdayStr);
+
+    // Get current week registrations
+    const weekUsers = getWeekRegistrations(mockUsers);
+    const weekCount = weekUsers.length;
+
+    setWalletData({
+      totalUsers,
+      todayRegister: todayCount,
+      yesterdayRegister: yesterdayCount,
+      currentWeekRegister: weekCount,
+      playActiveUsers: activeUsers,
+      playInactiveUsers: inactiveUsers,
+      blockDevices: blockedDevicesCount,
+    });
+  }, [dateFilter]);
+
+  // Manual apply/reset handlers
+  const handleApplyFilter = useCallback(() => {
+    setIsFiltering(true);
+    calculateStats();
+    setIsFiltering(false);
+    showToastNotification("Filter applied successfully!");
+  }, [dateFilter, calculateStats]);
+
+  const handleResetFilters = useCallback(() => {
+    setDateFilter("");
+    setWalletData({
+      totalUsers: 0,
+      todayRegister: 0,
+      yesterdayRegister: 0,
+      currentWeekRegister: 0,
+      playActiveUsers: 0,
+      playInactiveUsers: 0,
+      blockDevices: 0,
+    });
+    showToastNotification("Filters reset");
+  }, []);
 
   const showToastNotification = (message: string) => {
     setToastMessage(message);
@@ -74,10 +117,7 @@ export const WalletDetails = memo(() => {
         Metric: "Current Week Register",
         Value: walletData.currentWeekRegister,
       },
-      {
-        Metric: "Monthly Registration",
-        Value: walletData.monthlyRegistration.count,
-      },
+
       {
         Metric: "Play Active Users",
         Value: walletData.playActiveUsers,
@@ -102,7 +142,10 @@ export const WalletDetails = memo(() => {
     ];
     const data = [
       { metric: "Total Users", value: walletData.totalUsers.toString() },
-      { metric: "Today Register", value: walletData.todayRegister.toString() },
+      {
+        metric: "Today Register",
+        value: walletData.todayRegister.toString(),
+      },
       {
         metric: "Yesterday Register",
         value: walletData.yesterdayRegister.toString(),
@@ -111,10 +154,7 @@ export const WalletDetails = memo(() => {
         metric: "Current Week Register",
         value: walletData.currentWeekRegister.toString(),
       },
-      {
-        metric: "Monthly Registration",
-        value: walletData.monthlyRegistration.count.toString(),
-      },
+
       {
         metric: "Play Active Users",
         value: walletData.playActiveUsers.toString(),
@@ -123,7 +163,10 @@ export const WalletDetails = memo(() => {
         metric: "Play Inactive Users",
         value: walletData.playInactiveUsers.toString(),
       },
-      { metric: "Block Devices", value: walletData.blockDevices.toString() },
+      {
+        metric: "Block Devices",
+        value: walletData.blockDevices.toString(),
+      },
     ];
     exportToPDF({
       title: "Wallet Details Report",
@@ -135,8 +178,9 @@ export const WalletDetails = memo(() => {
   };
 
   const handleRefresh = useCallback(() => {
+    calculateStats();
     showToastNotification("✅ Data refreshed");
-  }, []);
+  }, [calculateStats]);
 
   return (
     <Layout onRefresh={handleRefresh}>
@@ -150,69 +194,40 @@ export const WalletDetails = memo(() => {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      {/* Date Filter */}
+      <div className="mb-4">
         <div className="relative">
+          {!dateFilter && (
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm">
+              dd/mm/yyyy
+            </span>
+          )}
           <input
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            className={`w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              !dateFilter ? "text-transparent" : ""
+            }`}
           />
         </div>
-        <div className="relative">
-          <select
-            value={monthFilter}
-            onChange={(e) => setMonthFilter(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Month</option>
-            {months.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-          <svg
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
-        <div className="relative">
-          <select
-            value={yearFilter}
-            onChange={(e) => setYearFilter(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {years.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-          <svg
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
+      </div>
+
+      {/* Apply & Reset Buttons */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <button
+          onClick={handleApplyFilter}
+          disabled={isFiltering}
+          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors"
+        >
+          {isFiltering ? "Applying..." : "Apply Filter"}
+        </button>
+        <button
+          onClick={handleResetFilters}
+          className="px-4 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors"
+        >
+          Reset Filters
+        </button>
       </div>
 
       {/* Stats Cards */}
@@ -253,41 +268,6 @@ export const WalletDetails = memo(() => {
                 {walletData.currentWeekRegister}
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* Daily Registration Card */}
-        <div className="bg-white border-2 border-blue-500 rounded-xl overflow-hidden shadow-sm">
-          <div className="bg-blue-500 text-white px-4 py-2">
-            <h3 className="font-semibold">Daily Registration</h3>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <div className="text-gray-700">
-              <p className="text-sm text-gray-500">Date</p>
-              <p className="font-medium">{walletData.dailyRegistration.date}</p>
-            </div>
-            <p className="text-blue-600 text-3xl font-bold">
-              {walletData.dailyRegistration.count}
-            </p>
-          </div>
-        </div>
-
-        {/* Monthly Registration Card */}
-        <div className="bg-white border-2 border-purple-500 rounded-xl overflow-hidden shadow-sm">
-          <div className="bg-purple-500 text-white px-4 py-2">
-            <h3 className="font-semibold">Monthly Registration</h3>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <div className="text-gray-700">
-              <p className="text-sm text-gray-500">Period</p>
-              <p className="font-medium">
-                {walletData.monthlyRegistration.month}{" "}
-                {walletData.monthlyRegistration.year}
-              </p>
-            </div>
-            <p className="text-purple-600 text-3xl font-bold">
-              {walletData.monthlyRegistration.count.toLocaleString()}
-            </p>
           </div>
         </div>
 
