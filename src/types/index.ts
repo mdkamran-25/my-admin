@@ -154,6 +154,21 @@ export interface RejectMoneyStats {
   withdrawMoneyReject: number;
 }
 
+export interface AddMoneyTransaction {
+  id: string;
+  userId: string;
+  username: string;
+  phone: string;
+  amount: number;
+  method: "upi" | "gateway" | "gateway-manually" | "manually";
+  status: "pending" | "completed" | "rejected";
+  transactionId?: string;
+  upiId?: string;
+  note?: string;
+  acceptTime: string;
+  createdAt: string;
+}
+
 export interface GamePlayStats {
   matkaPlay: number;
   starlinePlay: number;

@@ -5,7 +5,9 @@ import { WithdrawHistory } from "./pages/WithdrawHistory";
 import { DepositRequest } from "./pages/DepositRequest";
 import { UserProfile } from "./pages/UserProfile";
 import { UserList } from "./pages/UserList";
+import { UserSegments } from "./pages/UserSegments";
 import { WalletDetails } from "./pages/WalletDetails";
+import { AddMoneyHistory } from "./pages/AddMoneyHistory";
 import { ProfitLoose } from "./pages/ProfitLoose";
 import { ProfitLooseStarline } from "./pages/ProfitLooseStarline";
 import { ResultReport } from "./pages/ResultReport";
@@ -44,7 +46,9 @@ function App() {
         <Route path="/deposit-request" element={<DepositRequest />} />
         <Route path="/user-profile/:userId" element={<UserProfile />} />
         <Route path="/users" element={<UserList />} />
+        <Route path="/user-segments" element={<UserSegments />} />
         <Route path="/wallet-details" element={<WalletDetails />} />
+        <Route path="/add-money-history" element={<AddMoneyHistory />} />
         <Route path="/profit-loose" element={<ProfitLoose />} />
         <Route
           path="/profit-loose-starline"

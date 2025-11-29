@@ -1,6 +1,7 @@
 // Wallet Details Page - User Statistics and Registration Data
 
 import { memo, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { ExportButtons } from "../../components/common/ExportButtons";
@@ -17,6 +18,7 @@ import {
 import { mockUsers } from "../../services/mockData";
 
 export const WalletDetails = memo(() => {
+  const navigate = useNavigate();
   const [dateFilter, setDateFilter] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
@@ -272,7 +274,10 @@ export const WalletDetails = memo(() => {
         </div>
 
         {/* Activity Stats */}
-        <div className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm">
+        <div
+          className="bg-white border-2 border-green-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/user-segments?segment=play-active")}
+        >
           <div className="bg-green-500 text-white px-4 py-2">
             <h3 className="font-semibold">Play Active Users</h3>
           </div>
@@ -287,7 +292,10 @@ export const WalletDetails = memo(() => {
           </div>
         </div>
 
-        <div className="bg-white border-2 border-red-500 rounded-xl overflow-hidden shadow-sm">
+        <div
+          className="bg-white border-2 border-red-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/user-segments?segment=play-inactive")}
+        >
           <div className="bg-red-500 text-white px-4 py-2">
             <h3 className="font-semibold">Play Inactive Users</h3>
           </div>
@@ -302,7 +310,10 @@ export const WalletDetails = memo(() => {
           </div>
         </div>
 
-        <div className="bg-white border-2 border-gray-500 rounded-xl overflow-hidden shadow-sm">
+        <div
+          className="bg-white border-2 border-gray-500 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/user-segments?segment=block-devices")}
+        >
           <div className="bg-gray-700 text-white px-4 py-2">
             <h3 className="font-semibold">Block Devices</h3>
           </div>

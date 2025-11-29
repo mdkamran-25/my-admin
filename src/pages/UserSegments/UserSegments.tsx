@@ -1,7 +1,7 @@
-// User List Page - displays list of all users
+// User Segments Page - Displays filtered user lists (Play Active/Inactive, Block Devices)
 
 import { memo, useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaPhone, FaEye, FaTrash } from "react-icons/fa";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
@@ -12,11 +12,17 @@ import { EmptyState } from "../../components/common/EmptyState";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
 import { userApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
-import { RECORDS_PER_BLOCK_OPTIONS } from "../../constants";
+import {
+  RECORDS_PER_BLOCK_OPTIONS,
+  USER_SEGMENT_LABELS,
+} from "../../constants";
 import type { MockUser } from "../../types";
+import type { UserSegment } from "../../constants";
 
-export const UserList = memo(() => {
+export const UserSegments = memo(() => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const segment = (searchParams.get("segment") || "all") as UserSegment;
 
   const [allUsers, setAllUsers] = useState<MockUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +30,7 @@ export const UserList = memo(() => {
   const [recordsPerBlock, setRecordsPerBlock] = useState("500");
   const pageSize = parseInt(recordsPerBlock);
   const [filters, setFilters] = useState({
+    date: "",
     status: "",
     search: "",
   });
@@ -31,7 +38,6 @@ export const UserList = memo(() => {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch all users (using a large page size to get all)
       const response = await userApi.getUsers(1, 1000);
       setAllUsers(response.data);
     } catch (error) {
@@ -45,8 +51,49 @@ export const UserList = memo(() => {
     fetchUsers();
   }, [fetchUsers]);
 
+  // Apply segment-specific filtering
+  const getSegmentFilteredUsers = (users: MockUser[]) => {
+    switch (segment) {
+      case "play-active":
+        // Users who have played recently (last active < 7 days)
+        return users.filter((user) => {
+          const lastActive = new Date(user.lastActiveDate);
+          const today = new Date();
+          const diffDays = Math.ceil(
+            (today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          return diffDays <= 7 && user.status === "active";
+        });
+      case "play-inactive":
+        // Users who haven't played recently (last active >= 7 days)
+        return users.filter((user) => {
+          const lastActive = new Date(user.lastActiveDate);
+          const today = new Date();
+          const diffDays = Math.ceil(
+            (today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          return diffDays > 7;
+        });
+      case "block-devices":
+        // Users with blocked devices
+        return users.filter((user) => user.deviceBlocked);
+      default:
+        return users;
+    }
+  };
+
   // Apply filters to get filtered users
-  const filteredUsers = allUsers.filter((user) => {
+  const filteredUsers = getSegmentFilteredUsers(allUsers).filter((user) => {
+    // Date filter
+    if (filters.date) {
+      const filterDate = new Date(filters.date).toLocaleDateString();
+      const userDate = new Date(
+        user.registrationDate.split(" ")[0]
+      ).toLocaleDateString();
+      if (filterDate !== userDate) {
+        return false;
+      }
+    }
     // Status filter
     if (filters.status && user.status !== filters.status) {
       return false;
@@ -69,6 +116,11 @@ export const UserList = memo(() => {
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
+
+  const handleDateChange = (date: string) => {
+    setFilters((prev) => ({ ...prev, date }));
+    setCurrentPage(1);
+  };
 
   const handleStatusChange = (status: string) => {
     setFilters((prev) => ({ ...prev, status }));
@@ -94,7 +146,7 @@ export const UserList = memo(() => {
       registrationDate: u.registrationDate,
       status: u.status,
     }));
-    exportToCSV(exportData, "user-list");
+    exportToCSV(exportData, `${segment}-users`);
   };
 
   const handleExportPDF = () => {
@@ -106,8 +158,8 @@ export const UserList = memo(() => {
       status: u.status,
     }));
     exportToPDF({
-      title: "User List Report",
-      filename: "user-list",
+      title: `${USER_SEGMENT_LABELS[segment]} Report`,
+      filename: `${segment}-users`,
       data: exportData,
       columns: [
         { header: "SN", dataKey: "sn" },
@@ -128,7 +180,6 @@ export const UserList = memo(() => {
 
   const handleDeleteUser = useCallback((username: string) => {
     if (confirm(`Are you sure you want to delete user "${username}"?`)) {
-      // TODO: Implement delete functionality
       console.log(`User "${username}" deleted`);
     }
   }, []);
@@ -149,8 +200,22 @@ export const UserList = memo(() => {
     <Layout onRefresh={handleRefresh}>
       <BackButton />
 
+      {/* Page Title */}
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">
+          {USER_SEGMENT_LABELS[segment]}
+        </h1>
+        <p className="text-sm text-gray-600 mt-1">
+          Total: {filteredUsers.length} users
+        </p>
+      </div>
+
       {/* Filter Bar */}
       <FilterBar
+        showDateFilter
+        dateValue={filters.date}
+        onDateChange={handleDateChange}
+        dateLabel="Filter by Date"
         showStatusFilter
         statusValue={filters.status}
         onStatusChange={handleStatusChange}
@@ -175,19 +240,6 @@ export const UserList = memo(() => {
           },
         ]}
       />
-
-      {/* Action Buttons */}
-      <div className="flex gap-2 mb-4">
-        <button className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600">
-          Deactivate Selected
-        </button>
-        <button className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600">
-          Adjust Points
-        </button>
-        <button className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600">
-          Create Account
-        </button>
-      </div>
 
       {/* Loading State */}
       {loading && <TableRowSkeleton count={5} />}
@@ -317,4 +369,4 @@ export const UserList = memo(() => {
   );
 });
 
-UserList.displayName = "UserList";
+UserSegments.displayName = "UserSegments";
