@@ -17,6 +17,7 @@ import {
   mapAddMoneyStats,
   mapWithdrawMoneyStats,
   mapRejectStats,
+  mapBonusStats,
   mapWinStats,
   getDashboardDate,
 } from "../../utils/dashboardHelpers";
@@ -70,6 +71,10 @@ export const Dashboard = memo(() => {
     navigate("/win-report");
   }, [navigate]);
 
+  const handleRejectMoneyClick = useCallback(() => {
+    navigate("/withdraw-money-history");
+  }, [navigate]);
+
   // Loading State
   if (loading) {
     return (
@@ -106,6 +111,7 @@ export const Dashboard = memo(() => {
     overviewStats?.withdrawMoney
   );
   const rejectStatsArray = mapRejectStats(overviewStats?.rejectRequests);
+  const bonusStatsArray = mapBonusStats(overviewStats?.bonus);
   const dashboardDate = getDashboardDate(overviewStats.currentDate);
 
   // Main Dashboard Content
@@ -231,6 +237,18 @@ export const Dashboard = memo(() => {
             title="Reject Money Request"
             variant="reject"
             stats={rejectStatsArray}
+            totalLabel=""
+            collapsibleOnMobile={false}
+            onClick={handleRejectMoneyClick}
+          />
+        </div>
+
+        {/* Bonus Amount */}
+        <div>
+          <GameStatsCard
+            title="Bonus Amount"
+            variant="win"
+            stats={bonusStatsArray}
             totalLabel=""
             collapsibleOnMobile={false}
           />

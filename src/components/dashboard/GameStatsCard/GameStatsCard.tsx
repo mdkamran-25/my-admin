@@ -10,6 +10,7 @@ interface GameStatsCardProps {
   totalValue?: number;
   variant?: "play" | "win" | "profit" | "add" | "withdraw" | "reject";
   collapsibleOnMobile?: boolean;
+  onClick?: () => void;
 }
 
 const variantClasses: Record<string, string> = {
@@ -28,8 +29,13 @@ export const GameStatsCard = ({
   totalValue,
   variant = "play",
   collapsibleOnMobile = true,
+  onClick,
 }: GameStatsCardProps) => {
   const classes = variantClasses[variant] || variantClasses.play;
+  const cursorClass = onClick
+    ? "cursor-pointer hover:opacity-90 transition-opacity"
+    : "";
+
   const innerContent = (
     <div className="flex flex-col gap-4">
       {stats.map((stat) => (
@@ -60,8 +66,9 @@ export const GameStatsCard = ({
       <>
         {/* Mobile: collapsible details */}
         <details
-          className={`rounded-xl p-4 ${classes} shadow-lg sm:hidden`}
+          className={`rounded-xl p-4 ${classes} ${cursorClass} shadow-lg sm:hidden`}
           data-collapsible-on-mobile
+          onClick={onClick}
         >
           <summary className="flex items-center justify-between list-none">
             <h2 className="text-xl font-bold">{title}</h2>
@@ -75,7 +82,10 @@ export const GameStatsCard = ({
         </details>
 
         {/* Desktop: full card */}
-        <div className={`hidden sm:block rounded-xl p-6 ${classes} shadow-lg`}>
+        <div
+          className={`hidden sm:block rounded-xl p-6 ${classes} ${cursorClass} shadow-lg`}
+          onClick={onClick}
+        >
           <h2 className="text-2xl font-bold text-center mb-6 pb-4 border-b-2 border-white/30">
             {title}
           </h2>
@@ -88,8 +98,9 @@ export const GameStatsCard = ({
   // Default: full card for all sizes
   return (
     <div
-      className={`rounded-xl p-4 sm:p-6 ${classes} shadow-lg`}
+      className={`rounded-xl p-4 sm:p-6 ${classes} ${cursorClass} shadow-lg`}
       data-collapsible-on-mobile={collapsibleOnMobile}
+      onClick={onClick}
     >
       <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 pb-2 sm:pb-4 border-b-2 border-white/30">
         {title}

@@ -124,3 +124,12 @@ export const mapRejectStats = (rejects?: any) => {
     { label: "Withdraw Money Reject", value: rejects.withdrawMoneyReject || 0 },
   ];
 };
+
+export const mapBonusStats = (bonus?: any) => {
+  if (!bonus) return [];
+
+  return [
+    { label: "Welcome Bonus", value: bonus.welcomeBonus || 0 },
+    { label: "First Recharge Bonus", value: bonus.firstRechargeBonus || 0 },
+  ];
+};

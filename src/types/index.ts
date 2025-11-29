@@ -131,6 +131,7 @@ export interface DashboardStats {
   addMoney?: AddMoneyStats;
   withdrawMoney?: WithdrawMoneyStats;
   rejectRequests?: RejectMoneyStats;
+  bonus?: BonusStats;
 }
 
 export interface AddMoneyStats {
@@ -152,6 +153,11 @@ export interface WithdrawMoneyStats {
 export interface RejectMoneyStats {
   addMoneyReject: number;
   withdrawMoneyReject: number;
+}
+
+export interface BonusStats {
+  welcomeBonus: number;
+  firstRechargeBonus: number;
 }
 
 export interface AddMoneyTransaction {

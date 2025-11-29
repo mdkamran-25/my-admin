@@ -46,6 +46,10 @@ export const useDashboard = () => {
           addMoneyReject: 0,
           withdrawMoneyReject: 0,
         },
+        bonus: {
+          welcomeBonus: 100,
+          firstRechargeBonus: 0,
+        },
       });
 
       setPlayStats({
