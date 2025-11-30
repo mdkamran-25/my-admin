@@ -1,5 +1,6 @@
 // Authentication API Service
-const API_BASE_URL = "https://mdashboard-bice.vercel.app/api";
+// Use relative path to leverage Vercel proxy and avoid CORS issues
+const API_BASE_URL = "/api";
 
 interface LoginRequest {
   phone: string;

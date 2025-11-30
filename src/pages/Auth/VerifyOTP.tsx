@@ -123,7 +123,7 @@ export const VerifyOTP = () => {
   if (!phone) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-500 to-purple-600 px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         <button
           onClick={handleBackToLogin}
