@@ -12,7 +12,6 @@ export const Login = () => {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isNewUser, setIsNewUser] = useState(false);
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -24,38 +23,37 @@ export const Login = () => {
     e.preventDefault();
     setError("");
 
-    if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
-      setError("Please enter a valid 10-digit phone number");
-      return;
-    }
-
-    // If new user flag is set, name is required
-    if (isNewUser && !name.trim()) {
+    // Name is always required
+    if (!name.trim()) {
       setError("Please enter your name");
       return;
     }
 
-    if (isNewUser && name.trim().length < 2) {
+    if (name.trim().length < 2) {
       setError("Name must be at least 2 characters");
+      return;
+    }
+
+    if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+      setError("Please enter a valid 10-digit phone number");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await login(phone, isNewUser ? name.trim() : undefined);
-
-      if (response.type === "register" && !isNewUser) {
-        // Backend says this is a new user, show name field
-        setIsNewUser(true);
-        setError("New user detected. Please enter your name.");
-        setIsLoading(false);
-        return;
-      }
-
+      await login(phone, name.trim());
       navigate("/verify-otp", { state: { phone } });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send OTP");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to send OTP";
+
+      // Handle locked account specifically
+      if (errorMessage.toLowerCase().includes("locked")) {
+        setError("Your account has been locked. Please contact support.");
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -67,9 +65,7 @@ export const Login = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Login</h1>
           <p className="text-gray-600">
-            {isNewUser
-              ? "New user! Please enter your name and phone number"
-              : "Enter your phone number to continue"}
+            Enter your name and phone number to continue
           </p>
         </div>
 
@@ -80,28 +76,26 @@ export const Login = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Name field - shown for new users */}
-          {isNewUser && (
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-2">
-                Your Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MdPerson className="text-gray-400" size={20} />
-                </div>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your full name"
-                  disabled={isLoading}
-                  autoFocus
-                />
+          {/* Name field */}
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Your Name
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <MdPerson className="text-gray-400" size={20} />
               </div>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your full name"
+                disabled={isLoading}
+                autoFocus
+              />
             </div>
-          )}
+          </div>
 
           {/* Phone field */}
           <div className="mb-6">
@@ -134,7 +128,7 @@ export const Login = () => {
 
           <button
             type="submit"
-            disabled={isLoading || phone.length !== 10 || (isNewUser && !name.trim())}
+            disabled={isLoading || phone.length !== 10 || !name.trim()}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isLoading ? (

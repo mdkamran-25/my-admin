@@ -21,9 +21,14 @@ interface VerifyOTPRequest {
 
 export interface User {
   _id: string;
+  userId: number; // Auto-increment ID from backend
+  serialNumber: number; // Unique serial number
   name: string;
   phone: string;
-  role: string;
+  money: number; // User's wallet balance
+  isVerified: boolean; // OTP verification status
+  status: "pending" | "active" | "locked"; // Account status
+  role: string; // User role (e.g., "admin", "user")
   createdAt: string;
 }
 
