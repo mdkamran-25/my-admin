@@ -1,6 +1,6 @@
 // Sidebar navigation component
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MdDashboard,
@@ -18,6 +18,7 @@ import {
   MdAccountBalanceWallet,
 } from "react-icons/md";
 import { SettingsModal } from "../../common/SettingsModal";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -65,7 +66,24 @@ const menuItems = [
 
 export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = useCallback(async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      onClose();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, [isLoggingOut, logout, navigate, onClose]);
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
@@ -123,7 +141,9 @@ export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
                 <li key={index}>
                   <button
                     onClick={() => {
-                      if (isSettingsButton) {
+                      if (isLogoutButton) {
+                        handleLogout();
+                      } else if (isSettingsButton) {
                         setIsSettingsModalOpen(true);
                       } else {
                         if (item.path) {
@@ -132,14 +152,23 @@ export const Sidebar = memo(({ isOpen, onClose }: SidebarProps) => {
                         onClose();
                       }
                     }}
+                    disabled={isLogoutButton && isLoggingOut}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left ${
                       isLogoutButton
-                        ? "bg-black text-white hover:bg-gray-900"
+                        ? "bg-black text-white hover:bg-gray-900 disabled:opacity-50"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
-                    <Icon className="w-5 h-5 shrink-0" />
-                    <span className="text-sm font-medium">{item.label}</span>
+                    {isLogoutButton && isLoggingOut ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    ) : (
+                      <Icon className="w-5 h-5 shrink-0" />
+                    )}
+                    <span className="text-sm font-medium">
+                      {isLogoutButton && isLoggingOut
+                        ? "Logging out..."
+                        : item.label}
+                    </span>
                   </button>
                 </li>
               );
