@@ -1,5 +1,5 @@
 // Login Page
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { MdPhone, MdPerson } from "react-icons/md";
@@ -7,7 +7,7 @@ import { MdPhone, MdPerson } from "react-icons/md";
 export const Login = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
-  
+
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,7 @@ export const Login = () => {
 
     try {
       const response = await login(phone);
-      
+
       if (response.type === "register") {
         setStep("name");
       } else {
@@ -78,7 +78,9 @@ export const Login = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">A23 Admin</h1>
           <p className="text-gray-600">
-            {step === "phone" ? "Enter your phone number to continue" : "Welcome! Please enter your name"}
+            {step === "phone"
+              ? "Enter your phone number to continue"
+              : "Welcome! Please enter your name"}
           </p>
         </div>
 

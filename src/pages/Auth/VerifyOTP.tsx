@@ -1,5 +1,12 @@
 // OTP Verification Page
-import { useState, useRef, KeyboardEvent, ClipboardEvent, FormEvent, useEffect } from "react";
+import {
+  useState,
+  useRef,
+  type KeyboardEvent,
+  type ClipboardEvent,
+  type FormEvent,
+  useEffect,
+} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { MdArrowBack } from "react-icons/md";
@@ -8,15 +15,15 @@ export const VerifyOTP = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { verifyOTP, login } = useAuth();
-  
+
   const phone = location.state?.phone;
-  
+
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [canResend, setCanResend] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
-  
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -56,7 +63,7 @@ export const VerifyOTP = () => {
   const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").replace(/\D/g, "");
-    
+
     if (pastedData.length === 6) {
       const newOtp = pastedData.split("");
       setOtp(newOtp);
@@ -67,7 +74,7 @@ export const VerifyOTP = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const otpString = otp.join("");
-    
+
     if (otpString.length !== 6) {
       setError("Please enter a 6-digit OTP");
       return;
@@ -80,7 +87,9 @@ export const VerifyOTP = () => {
       await verifyOTP(phone, otpString);
       navigate("/", { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid OTP. Please try again.");
+      setError(
+        err instanceof Error ? err.message : "Invalid OTP. Please try again."
+      );
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
     } finally {
@@ -90,10 +99,10 @@ export const VerifyOTP = () => {
 
   const handleResendOTP = async () => {
     if (!canResend) return;
-    
+
     setIsLoading(true);
     setError("");
-    
+
     try {
       await login(phone);
       setCanResend(false);
@@ -126,9 +135,7 @@ export const VerifyOTP = () => {
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Verify OTP</h1>
-          <p className="text-gray-600">
-            Enter the 6-digit code sent to
-          </p>
+          <p className="text-gray-600">Enter the 6-digit code sent to</p>
           <p className="text-gray-800 font-semibold">{phone}</p>
         </div>
 
@@ -143,7 +150,9 @@ export const VerifyOTP = () => {
             {otp.map((digit, index) => (
               <input
                 key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
@@ -185,7 +194,8 @@ export const VerifyOTP = () => {
               </button>
             ) : (
               <p className="text-gray-600 text-sm">
-                Resend OTP in <span className="font-semibold">{resendTimer}s</span>
+                Resend OTP in{" "}
+                <span className="font-semibold">{resendTimer}s</span>
               </p>
             )}
           </div>

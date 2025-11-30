@@ -4,7 +4,7 @@ import {
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
 } from "react";
 import { authApi, type User } from "../services/authApi";
 
