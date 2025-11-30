@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/auth";
+import { Login, VerifyOTP } from "./pages/Auth";
 import { Dashboard } from "./pages/Dashboard";
 import { WithdrawRequest } from "./pages/WithdrawRequest";
 import { WithdrawHistory } from "./pages/WithdrawHistory";
@@ -47,73 +50,346 @@ import {
 function App() {
   return (
     <BrowserRouter>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/withdraw-request" element={<WithdrawRequest />} />
-        <Route path="/withdraw-history" element={<WithdrawHistory />} />
-        <Route path="/deposit-request" element={<DepositRequest />} />
-        <Route path="/user-profile/:userId" element={<UserProfile />} />
-        <Route path="/users" element={<UserList />} />
-        <Route path="/user-segments" element={<UserSegments />} />
-        <Route path="/wallet-details" element={<WalletDetails />} />
-        <Route path="/add-money-history" element={<AddMoneyHistory />} />
-        <Route path="/add-money-manually" element={<AddMoneyManually />} />
-        <Route
-          path="/withdraw-money-manually"
-          element={<WithdrawMoneyManually />}
-        />
-        <Route path="/user-game-profit-loss" element={<UserGameProfitLoss />} />
-        <Route path="/user-points-history" element={<UserPointsHistory />} />
-        <Route path="/bid-history" element={<BidHistory />} />
-        <Route path="/user-profit-loss" element={<UserProfitLoss />} />
-        <Route path="/game-report" element={<GameReport />} />
-        <Route path="/win-report" element={<WinReport />} />
-        <Route
-          path="/withdraw-money-history"
-          element={<WithdrawMoneyHistory />}
-        />
-        <Route path="/profit-loose" element={<ProfitLoose />} />
-        <Route
-          path="/profit-loose-starline"
-          element={<ProfitLooseStarline />}
-        />
-        <Route path="/result-report" element={<ResultReport />} />
-        <Route path="/report-generation" element={<ReportGeneration />} />
-        <Route
-          path="/report-generation-starline"
-          element={<ReportGenerationStarline />}
-        />
-        <Route path="/win-history" element={<WinHistory />} />
-        <Route path="/win-history-starline" element={<WinHistoryStarline />} />
-        <Route path="/add-game" element={<AddGame />} />
-        <Route path="/game-cancel" element={<GameCancel />} />
-        <Route path="/funding-player" element={<FundingPlayer />} />
-        <Route path="/activity-logs" element={<ActivityLogs />} />
+      <AuthProvider>
+        <ToastContainer />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
 
-        {/* Settings Routes */}
-        <Route path="/settings/profile" element={<ProfileSettings />} />
-        <Route path="/settings/game-on-off" element={<GameOnOff />} />
-        <Route
-          path="/settings/game-on-off-starline"
-          element={<GameOnOffStarline />}
-        />
-        <Route path="/settings/rules-set" element={<RulesSet />} />
-        <Route path="/settings/block-upi" element={<BlockUpi />} />
-        <Route path="/settings/upi-ar" element={<UpiAR />} />
-        <Route path="/settings/notice-board" element={<NoticeBoard />} />
-        <Route
-          path="/settings/personal-notice-board"
-          element={<PersonalNoticeBoard />}
-        />
-        <Route path="/settings/video" element={<VideoSettings />} />
-        <Route
-          path="/settings/block-device-list"
-          element={<BlockDeviceList />}
-        />
-        <Route path="/settings/game-rate" element={<GameRate />} />
-        <Route path="/settings/all-result" element={<AllResult />} />
-      </Routes>
+          {/* Protected Routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/withdraw-request"
+            element={
+              <ProtectedRoute>
+                <WithdrawRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/withdraw-history"
+            element={
+              <ProtectedRoute>
+                <WithdrawHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/deposit-request"
+            element={
+              <ProtectedRoute>
+                <DepositRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-profile/:userId"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <UserList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-segments"
+            element={
+              <ProtectedRoute>
+                <UserSegments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wallet-details"
+            element={
+              <ProtectedRoute>
+                <WalletDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-money-history"
+            element={
+              <ProtectedRoute>
+                <AddMoneyHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-money-manually"
+            element={
+              <ProtectedRoute>
+                <AddMoneyManually />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/withdraw-money-manually"
+            element={
+              <ProtectedRoute>
+                <WithdrawMoneyManually />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-game-profit-loss"
+            element={
+              <ProtectedRoute>
+                <UserGameProfitLoss />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-points-history"
+            element={
+              <ProtectedRoute>
+                <UserPointsHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bid-history"
+            element={
+              <ProtectedRoute>
+                <BidHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-profit-loss"
+            element={
+              <ProtectedRoute>
+                <UserProfitLoss />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game-report"
+            element={
+              <ProtectedRoute>
+                <GameReport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/win-report"
+            element={
+              <ProtectedRoute>
+                <WinReport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/withdraw-money-history"
+            element={
+              <ProtectedRoute>
+                <WithdrawMoneyHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profit-loose"
+            element={
+              <ProtectedRoute>
+                <ProfitLoose />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profit-loose-starline"
+            element={
+              <ProtectedRoute>
+                <ProfitLooseStarline />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/result-report"
+            element={
+              <ProtectedRoute>
+                <ResultReport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report-generation"
+            element={
+              <ProtectedRoute>
+                <ReportGeneration />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report-generation-starline"
+            element={
+              <ProtectedRoute>
+                <ReportGenerationStarline />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/win-history"
+            element={
+              <ProtectedRoute>
+                <WinHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/win-history-starline"
+            element={
+              <ProtectedRoute>
+                <WinHistoryStarline />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-game"
+            element={
+              <ProtectedRoute>
+                <AddGame />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game-cancel"
+            element={
+              <ProtectedRoute>
+                <GameCancel />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/funding-player"
+            element={
+              <ProtectedRoute>
+                <FundingPlayer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/activity-logs"
+            element={
+              <ProtectedRoute>
+                <ActivityLogs />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Settings Routes */}
+          <Route
+            path="/settings/profile"
+            element={
+              <ProtectedRoute>
+                <ProfileSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/game-on-off"
+            element={
+              <ProtectedRoute>
+                <GameOnOff />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/game-on-off-starline"
+            element={
+              <ProtectedRoute>
+                <GameOnOffStarline />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/rules-set"
+            element={
+              <ProtectedRoute>
+                <RulesSet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/block-upi"
+            element={
+              <ProtectedRoute>
+                <BlockUpi />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/upi-ar"
+            element={
+              <ProtectedRoute>
+                <UpiAR />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/notice-board"
+            element={
+              <ProtectedRoute>
+                <NoticeBoard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/personal-notice-board"
+            element={
+              <ProtectedRoute>
+                <PersonalNoticeBoard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/video"
+            element={
+              <ProtectedRoute>
+                <VideoSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/block-device-list"
+            element={
+              <ProtectedRoute>
+                <BlockDeviceList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/game-rate"
+            element={
+              <ProtectedRoute>
+                <GameRate />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/all-result"
+            element={
+              <ProtectedRoute>
+                <AllResult />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
