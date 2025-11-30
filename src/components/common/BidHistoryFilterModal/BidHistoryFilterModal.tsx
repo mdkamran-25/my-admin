@@ -1,6 +1,7 @@
 // Bid History Filter Modal - allows admin to filter bid history by game type, winning status, and game
 
 import { memo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdClose } from "react-icons/md";
 
 interface BidHistoryFilterModalProps {
@@ -51,6 +52,7 @@ export const BidHistoryFilterModal = memo(
     gameType,
     onApplyFilter,
   }: BidHistoryFilterModalProps) => {
+    const navigate = useNavigate();
     const [gameTypeFilter, setGameTypeFilter] = useState<
       "Open" | "Close" | null
     >(null);
@@ -89,11 +91,24 @@ export const BidHistoryFilterModal = memo(
     };
 
     const handleApplyFilter = () => {
+      // Call the callback to update parent state
       onApplyFilter({
         gameType: gameTypeFilter,
         winningStatus,
         selectedGames,
       });
+
+      // Build query params for navigation
+      const params = new URLSearchParams();
+      params.set("username", username);
+      params.set("gameType", gameType);
+      if (gameTypeFilter) params.set("filterType", gameTypeFilter);
+      if (winningStatus) params.set("winningStatus", winningStatus);
+      if (selectedGames.length > 0)
+        params.set("games", selectedGames.join(","));
+
+      // Navigate to bid history page
+      navigate(`/bid-history?${params.toString()}`);
       onClose();
     };
 

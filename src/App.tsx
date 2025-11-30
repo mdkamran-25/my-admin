@@ -12,6 +12,7 @@ import { AddMoneyManually } from "./pages/AddMoneyManually";
 import { WithdrawMoneyManually } from "./pages/WithdrawMoneyManually";
 import { UserGameProfitLoss } from "./pages/UserGameProfitLoss";
 import { UserPointsHistory } from "./pages/UserPointsHistory";
+import { BidHistory } from "./pages/BidHistory";
 import { UserProfitLoss } from "./pages/UserProfitLoss";
 import { GameReport } from "./pages/GameReport";
 import { WinReport } from "./pages/WinReport";
@@ -64,6 +65,7 @@ function App() {
         />
         <Route path="/user-game-profit-loss" element={<UserGameProfitLoss />} />
         <Route path="/user-points-history" element={<UserPointsHistory />} />
+        <Route path="/bid-history" element={<BidHistory />} />
         <Route path="/user-profit-loss" element={<UserProfitLoss />} />
         <Route path="/game-report" element={<GameReport />} />
         <Route path="/win-report" element={<WinReport />} />

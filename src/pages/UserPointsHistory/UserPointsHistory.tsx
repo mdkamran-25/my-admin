@@ -192,9 +192,7 @@ export const UserPointsHistory = memo(() => {
 
   const handleApplyBidFilter = (filters: BidHistoryFilters) => {
     console.log("Applied filters:", filters);
-    setIsBidFilterModalOpen(false);
-    // Here you can filter the bid history based on the selected filters
-    // You might want to navigate to a bid history page or update the current view
+    // Modal will handle navigation to /bid-history
   };
 
   const filterButtons = [
