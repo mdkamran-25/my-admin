@@ -2,6 +2,17 @@
 // Use relative path to leverage Vercel proxy and avoid CORS issues
 const API_BASE_URL = "/api";
 
+// Helper function to safely parse JSON responses
+const safeJsonParse = async (response: Response) => {
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    // If parsing fails, throw with the original text or a generic message
+    throw new Error(text || `Server error: ${response.status}`);
+  }
+};
+
 interface LoginRequest {
   phone: string;
   name?: string;
@@ -61,13 +72,13 @@ export const authApi = {
       body: JSON.stringify(data),
     });
 
+    const result = await safeJsonParse(response);
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to send OTP");
+      throw new Error(result.message || "Failed to send OTP");
     }
 
-    const result = await response.json();
-    console.log("🔐 Login Response:", result); // Log to see if OTP is included
+    console.log("🔐 Login Response:", result);
     return result;
   },
 
@@ -82,12 +93,13 @@ export const authApi = {
       body: JSON.stringify(data),
     });
 
+    const result = await safeJsonParse(response);
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to verify OTP");
+      throw new Error(result.message || "Failed to verify OTP");
     }
 
-    return response.json();
+    return result;
   },
 
   // Get Profile (Protected)
@@ -97,12 +109,13 @@ export const authApi = {
       credentials: "include",
     });
 
+    const result = await safeJsonParse(response);
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch profile");
+      throw new Error(result.message || "Failed to fetch profile");
     }
 
-    return response.json();
+    return result;
   },
 
   // Logout
@@ -112,12 +125,13 @@ export const authApi = {
       credentials: "include",
     });
 
+    const result = await safeJsonParse(response);
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to logout");
+      throw new Error(result.message || "Failed to logout");
     }
 
-    return response.json();
+    return result;
   },
 };
 
