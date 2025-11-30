@@ -12,7 +12,7 @@ export const Login = () => {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [step, setStep] = useState<"phone" | "name">("phone");
+  const [isNewUser, setIsNewUser] = useState(false);
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -20,7 +20,7 @@ export const Login = () => {
     return null;
   }
 
-  const handlePhoneSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -29,33 +29,13 @@ export const Login = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      const response = await login(phone);
-
-      if (response.type === "register") {
-        setStep("name");
-      } else {
-        navigate("/verify-otp", { state: { phone } });
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send OTP");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleNameSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!name.trim()) {
+    // If new user flag is set, name is required
+    if (isNewUser && !name.trim()) {
       setError("Please enter your name");
       return;
     }
 
-    if (name.trim().length < 2) {
+    if (isNewUser && name.trim().length < 2) {
       setError("Name must be at least 2 characters");
       return;
     }
@@ -63,7 +43,16 @@ export const Login = () => {
     setIsLoading(true);
 
     try {
-      await login(phone, name.trim());
+      const response = await login(phone, isNewUser ? name.trim() : undefined);
+
+      if (response.type === "register" && !isNewUser) {
+        // Backend says this is a new user, show name field
+        setIsNewUser(true);
+        setError("New user detected. Please enter your name.");
+        setIsLoading(false);
+        return;
+      }
+
       navigate("/verify-otp", { state: { phone } });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send OTP");
@@ -76,11 +65,11 @@ export const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-500 to-purple-600 px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">A23 Admin</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Login</h1>
           <p className="text-gray-600">
-            {step === "phone"
-              ? "Enter your phone number to continue"
-              : "Welcome! Please enter your name"}
+            {isNewUser
+              ? "New user! Please enter your name and phone number"
+              : "Enter your phone number to continue"}
           </p>
         </div>
 
@@ -90,70 +79,10 @@ export const Login = () => {
           </div>
         )}
 
-        {step === "phone" && (
-          <form onSubmit={handlePhoneSubmit}>
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-semibold mb-2">
-                Phone Number
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MdPhone className="text-gray-400" size={20} />
-                </div>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "");
-                    if (value.length <= 10) {
-                      setPhone(value);
-                    }
-                  }}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter 10-digit phone number"
-                  maxLength={10}
-                  disabled={isLoading}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Enter your 10-digit mobile number
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || phone.length !== 10}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Sending OTP...
-                </span>
-              ) : (
-                "Send OTP"
-              )}
-            </button>
-          </form>
-        )}
-
-        {step === "name" && (
-          <form onSubmit={handleNameSubmit}>
-            <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
-              Phone: <span className="font-semibold">{phone}</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setStep("phone");
-                  setName("");
-                }}
-                className="ml-2 text-blue-600 underline hover:text-blue-800"
-              >
-                Change
-              </button>
-            </div>
-
-            <div className="mb-6">
+        <form onSubmit={handleSubmit}>
+          {/* Name field - shown for new users */}
+          {isNewUser && (
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-semibold mb-2">
                 Your Name
               </label>
@@ -172,23 +101,52 @@ export const Login = () => {
                 />
               </div>
             </div>
+          )}
 
-            <button
-              type="submit"
-              disabled={isLoading || !name.trim()}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Sending OTP...
-                </span>
-              ) : (
-                "Continue"
-              )}
-            </button>
-          </form>
-        )}
+          {/* Phone field */}
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Phone Number
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <MdPhone className="text-gray-400" size={20} />
+              </div>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  if (value.length <= 10) {
+                    setPhone(value);
+                  }
+                }}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter 10-digit phone number"
+                maxLength={10}
+                disabled={isLoading}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Enter your 10-digit mobile number
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading || phone.length !== 10 || (isNewUser && !name.trim())}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <span className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Sending OTP...
+              </span>
+            ) : (
+              "Send OTP"
+            )}
+          </button>
+        </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>Secure admin login with OTP verification</p>
