@@ -56,10 +56,28 @@ export const UserProfitLoss = memo(() => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dateParam = searchParams.get("date") || "";
+  const userIdParam = searchParams.get("userId");
+  const usernameParam = searchParams.get("username");
 
   const [allData] = useState<UserProfitLossData[]>(mockData);
+  const [filteredData, setFilteredData] =
+    useState<UserProfitLossData[]>(mockData);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dateParam);
+
+  // Filter data by userId if present in URL params
+  useEffect(() => {
+    if (userIdParam && usernameParam) {
+      const filtered = allData.filter(
+        (item) =>
+          item.userId === userIdParam ||
+          item.username.toLowerCase() === usernameParam.toLowerCase()
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(allData);
+    }
+  }, [userIdParam, usernameParam, allData]);
 
   useEffect(() => {
     setLoading(true);
@@ -101,6 +119,15 @@ export const UserProfitLoss = memo(() => {
         <h1 className="text-xl font-bold">User Profit Loss list</h1>
       </div>
 
+      {/* Filtered User Banner */}
+      {usernameParam && (
+        <div className="bg-blue-100 border-l-4 border-blue-500 px-4 py-3 mb-4 rounded">
+          <p className="text-blue-800 font-medium">
+            Showing data for: <span className="font-bold">{usernameParam}</span>
+          </p>
+        </div>
+      )}
+
       {/* Date Filter */}
       <div className="mb-4 flex justify-center">
         <div className="relative w-full max-w-md">
@@ -122,12 +149,12 @@ export const UserProfitLoss = memo(() => {
       {loading && <TableRowSkeleton count={5} />}
 
       {/* Empty State */}
-      {!loading && allData.length === 0 && (
+      {!loading && filteredData.length === 0 && (
         <EmptyState message="No data found" />
       )}
 
       {/* Data Table */}
-      {!loading && allData.length > 0 && (
+      {!loading && filteredData.length > 0 && (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
           <div className="overflow-x-auto">
             <table className="w-full min-w-max">
@@ -166,7 +193,7 @@ export const UserProfitLoss = memo(() => {
 
               {/* Table Body */}
               <tbody className="divide-y divide-gray-200">
-                {allData.map((item) => (
+                {filteredData.map((item) => (
                   <tr
                     key={item.id}
                     className="hover:bg-gray-50 transition-colors"

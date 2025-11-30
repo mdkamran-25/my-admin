@@ -10,6 +10,7 @@ import { ExportButtons } from "../../components/common/ExportButtons";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoaders";
+import { UserActionModal } from "../../components/common/UserActionModal";
 import { userApi } from "../../services/mockApi";
 import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import { RECORDS_PER_BLOCK_OPTIONS } from "../../constants";
@@ -27,6 +28,8 @@ export const UserList = memo(() => {
     status: "",
     search: "",
   });
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<MockUser | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -137,6 +140,16 @@ export const UserList = memo(() => {
     fetchUsers();
   }, [fetchUsers]);
 
+  const handleOpenActionModal = useCallback((user: MockUser) => {
+    setSelectedUser(user);
+    setIsActionModalOpen(true);
+  }, []);
+
+  const handleCloseActionModal = useCallback(() => {
+    setIsActionModalOpen(false);
+    setSelectedUser(null);
+  }, []);
+
   const calculateInactiveDays = (lastActiveDate: string) => {
     const lastActive = new Date(lastActiveDate);
     const today = new Date();
@@ -242,10 +255,22 @@ export const UserList = memo(() => {
                       </div>
 
                       {/* Username */}
-                      <div className="text-gray-900">{user.username}</div>
+                      <div
+                        className="text-gray-900 cursor-pointer hover:text-blue-600 hover:underline transition-colors"
+                        onClick={() => handleOpenActionModal(user)}
+                      >
+                        {user.username}
+                      </div>
 
                       {/* Points */}
-                      <div className="text-center text-blue-600 font-medium">
+                      <div
+                        className="text-center text-blue-600 font-medium cursor-pointer hover:text-blue-800 hover:underline transition-colors"
+                        onClick={() =>
+                          navigate(
+                            `/user-points-history?userId=${user.id}&username=${user.username}`
+                          )
+                        }
+                      >
                         {user.points}
                       </div>
 
@@ -312,6 +337,15 @@ export const UserList = memo(() => {
             />
           </div>
         </>
+      )}
+
+      {/* User Action Modal */}
+      {selectedUser && (
+        <UserActionModal
+          isOpen={isActionModalOpen}
+          onClose={handleCloseActionModal}
+          user={selectedUser}
+        />
       )}
     </Layout>
   );

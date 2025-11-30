@@ -1,0 +1,1 @@
+export { UserPointsHistory } from "./UserPointsHistory";

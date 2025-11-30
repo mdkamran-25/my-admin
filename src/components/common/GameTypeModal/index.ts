@@ -1,0 +1,1 @@
+export { GameTypeModal } from "./GameTypeModal";

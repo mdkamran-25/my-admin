@@ -1,6 +1,7 @@
 // User Activity Log Page - displays user activity history with filters
 
 import { memo, useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 import { FilterBar } from "../../components/common/FilterBar";
@@ -13,6 +14,10 @@ import { exportToCSV, exportToPDF } from "../../utils/exportHelpers";
 import type { MockActivityLog } from "../../types";
 
 export const ActivityLogs = memo(() => {
+  const [searchParams] = useSearchParams();
+  const userIdParam = searchParams.get("userId");
+  const usernameParam = searchParams.get("username");
+
   const [activityLogs, setActivityLogs] = useState<MockActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,23 +26,28 @@ export const ActivityLogs = memo(() => {
   const [filters, setFilters] = useState({
     date: "",
     activityType: "",
-    search: "",
+    search: usernameParam || "",
   });
 
   const fetchActivityLogs = useCallback(async () => {
     setLoading(true);
     try {
       const response = await activityApi.getActivityLogs(currentPage, pageSize);
-      // Note: Filtering by date/activityType/search would need to be implemented in activityApi
-      // For now, we're using all logs returned from the API
-      setActivityLogs(response.data);
+      let logs = response.data;
+
+      // Filter by userId if provided in URL params
+      if (userIdParam) {
+        logs = logs.filter((log) => log.userId === userIdParam);
+      }
+
+      setActivityLogs(logs);
       setTotalPages(response.pagination.totalPages);
     } catch (error) {
       console.error("Failed to fetch activity logs:", error);
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, userIdParam]);
 
   useEffect(() => {
     fetchActivityLogs();
@@ -98,6 +108,16 @@ export const ActivityLogs = memo(() => {
         </h1>
       </div>
 
+      {/* Filtered User Banner */}
+      {usernameParam && (
+        <div className="bg-blue-100 border-l-4 border-blue-500 px-4 py-3 mb-4 rounded">
+          <p className="text-blue-800 font-medium">
+            Showing activities for:{" "}
+            <span className="font-bold">{usernameParam}</span>
+          </p>
+        </div>
+      )}
+
       {/* Filter Section */}
       <FilterBar
         showDateFilter
@@ -138,45 +158,32 @@ export const ActivityLogs = memo(() => {
                 key={log.id}
                 className={`${getBackgroundColor(
                   index
-                )} rounded-xl p-4 shadow-sm`}
+                )} rounded-2xl p-5 shadow-md`}
               >
-                {/* Header */}
+                {/* Username Header */}
                 <div className="mb-3">
-                  <h2 className="text-gray-900 text-lg font-bold">
-                    ({log.id}) - {log.phone}
+                  <h2 className="text-gray-900 text-xl font-bold mb-1">
+                    Username : {log.username}
                   </h2>
-                  <p className="text-gray-800 text-base font-semibold">
-                    {log.username}
-                  </p>
                 </div>
 
                 {/* Activity Type */}
-                <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-gray-700"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                    />
-                  </svg>
-                  <span className="text-gray-800 font-semibold">
+                <div className="bg-white rounded-lg p-3 mb-3">
+                  <h3 className="text-gray-900 font-bold text-lg mb-2">
                     {log.activity}
-                  </span>
+                  </h3>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    {log.device}
+                  </p>
+                  <p className="text-gray-600 text-sm mt-1">
+                    {log.ipAddress ? `IP: ${log.ipAddress}` : ""}
+                  </p>
                 </div>
 
-                {/* Device & IP */}
-                <p className="text-gray-700 text-sm leading-relaxed mb-3">
-                  Device: {log.device} | IP: {log.ipAddress}
-                </p>
-
                 {/* Timestamp */}
-                <p className="text-gray-600 text-sm">{log.timestamp}</p>
+                <p className="text-gray-600 text-sm">
+                  {log.username}, {log.timestamp}
+                </p>
               </div>
             ))}
           </div>

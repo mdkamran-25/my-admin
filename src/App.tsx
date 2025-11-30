@@ -8,6 +8,10 @@ import { UserList } from "./pages/UserList";
 import { UserSegments } from "./pages/UserSegments";
 import { WalletDetails } from "./pages/WalletDetails";
 import { AddMoneyHistory } from "./pages/AddMoneyHistory";
+import { AddMoneyManually } from "./pages/AddMoneyManually";
+import { WithdrawMoneyManually } from "./pages/WithdrawMoneyManually";
+import { UserGameProfitLoss } from "./pages/UserGameProfitLoss";
+import { UserPointsHistory } from "./pages/UserPointsHistory";
 import { UserProfitLoss } from "./pages/UserProfitLoss";
 import { GameReport } from "./pages/GameReport";
 import { WinReport } from "./pages/WinReport";
@@ -53,6 +57,13 @@ function App() {
         <Route path="/user-segments" element={<UserSegments />} />
         <Route path="/wallet-details" element={<WalletDetails />} />
         <Route path="/add-money-history" element={<AddMoneyHistory />} />
+        <Route path="/add-money-manually" element={<AddMoneyManually />} />
+        <Route
+          path="/withdraw-money-manually"
+          element={<WithdrawMoneyManually />}
+        />
+        <Route path="/user-game-profit-loss" element={<UserGameProfitLoss />} />
+        <Route path="/user-points-history" element={<UserPointsHistory />} />
         <Route path="/user-profit-loss" element={<UserProfitLoss />} />
         <Route path="/game-report" element={<GameReport />} />
         <Route path="/win-report" element={<WinReport />} />
