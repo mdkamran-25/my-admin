@@ -114,6 +114,7 @@ export const ProfitLoose = memo(() => {
   const [selectedDate, setSelectedDate] = useState("2025-11-25");
   const [selectedStatus, setSelectedStatus] = useState("Open-close");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
 
   // Mock game type details for when a specific game is selected
   const getGameTypeDetails = (): GameTypeDetails => {
@@ -137,6 +138,13 @@ export const ProfitLoose = memo(() => {
       !game.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
       return false;
+
+    // Apply status filter tags
+    if (selectedFilter === "win" && !game.isProfit) return false;
+    if (selectedFilter === "lose" && game.isProfit) return false;
+    // For "pending" and "cancelled", we would filter based on game status if available
+    // Currently keeping all for these filters as mock data doesn't have these states
+
     return true;
   });
 
@@ -246,6 +254,60 @@ export const ProfitLoose = memo(() => {
             />
           </div>
         </div>
+
+        {/* Filter Tags */}
+        <div className="flex flex-wrap gap-2 mt-4">
+          <button
+            onClick={() => setSelectedFilter("all")}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedFilter === "all"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setSelectedFilter("win")}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedFilter === "win"
+                ? "bg-green-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Win
+          </button>
+          <button
+            onClick={() => setSelectedFilter("lose")}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedFilter === "lose"
+                ? "bg-red-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Lose
+          </button>
+          <button
+            onClick={() => setSelectedFilter("pending")}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedFilter === "pending"
+                ? "bg-yellow-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => setSelectedFilter("cancelled")}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedFilter === "cancelled"
+                ? "bg-orange-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Cancelled
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -334,15 +396,6 @@ export const ProfitLoose = memo(() => {
             </tfoot>
           </table>
         </div>
-      </div>
-
-      {/* Export Buttons */}
-      <div className="mt-4 flex justify-center">
-        <ExportButtons
-          onExportCSV={handleExportCSV}
-          onExportPDF={handleExportPDF}
-          disabled={filteredGames.length === 0}
-        />
       </div>
 
       {/* Game Type Details - Show when specific game is selected */}
@@ -642,6 +695,15 @@ export const ProfitLoose = memo(() => {
           </div>
         </div>
       )}
+
+      {/* Export Buttons - Always at bottom */}
+      <div className="mt-6 flex justify-center pb-4">
+        <ExportButtons
+          onExportCSV={handleExportCSV}
+          onExportPDF={handleExportPDF}
+          disabled={filteredGames.length === 0}
+        />
+      </div>
     </Layout>
   );
 });
