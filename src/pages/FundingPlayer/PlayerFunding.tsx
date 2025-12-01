@@ -530,7 +530,9 @@ export const PlayerFunding = memo(() => {
                   <td className="py-3 px-2 text-gray-700 font-medium">
                     {bid.gameName}
                   </td>
-                  <td className="py-3 px-2 text-gray-700">{bid.bidPlayDigit}</td>
+                  <td className="py-3 px-2 text-gray-700">
+                    {bid.bidPlayDigit}
+                  </td>
                   <td className="py-3 px-2 text-gray-700">
                     {bid.playBidAmount}
                   </td>
@@ -546,7 +548,9 @@ export const PlayerFunding = memo(() => {
                   <td className="py-3 px-2 text-gray-600 text-sm">
                     {bid.playTime}
                   </td>
-                  <td className="py-3 px-2 text-gray-500 text-sm">{bid.tVia}</td>
+                  <td className="py-3 px-2 text-gray-500 text-sm">
+                    {bid.tVia}
+                  </td>
                 </tr>
               ))}
             </tbody>
