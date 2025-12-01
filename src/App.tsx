@@ -29,7 +29,7 @@ import { WinHistory } from "./pages/WinHistory";
 import { WinHistoryStarline } from "./pages/WinHistoryStarline";
 import { AddGame } from "./pages/AddGame";
 import { GameCancel } from "./pages/GameCancel";
-import { FundingPlayer } from "./pages/FundingPlayer";
+import { FundingPlayer, PlayerFunding } from "./pages/FundingPlayer";
 import { ActivityLogs } from "./pages/ActivityLogs";
 import { ToastContainer } from "./components/common/Toast";
 import {
@@ -279,6 +279,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <FundingPlayer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/player-funding/:userId"
+            element={
+              <ProtectedRoute>
+                <PlayerFunding />
               </ProtectedRoute>
             }
           />

@@ -211,10 +211,10 @@ export const FundingPlayer = memo(() => {
                         </span>
                       </td>
 
-                      {/* View */}
+                      {/* View - Opens Player Funding page */}
                       <td className="text-center py-3 px-2">
                         <button
-                          onClick={() => navigate(`/user-profile/${player.id}`)}
+                          onClick={() => navigate(`/player-funding/${player.id}`)}
                           className="text-blue-600 hover:text-blue-800"
                         >
                           <svg

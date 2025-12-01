@@ -22,77 +22,305 @@ export const ReportGenerationStarline = memo(() => {
 
   // Mock data for Single Ank
   const singleAnkData: BidData[] = [
-    { game: "starline", type: "singleank", time: "13:00:00", number: "0", bet: 195 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "1", bet: 155 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "2", bet: 284 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "3", bet: 144 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "4", bet: 324 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "5", bet: 280 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "6", bet: 229 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "7", bet: 149 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "8", bet: 296 },
-    { game: "starline", type: "singleank", time: "13:00:00", number: "9", bet: 240 },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "0",
+      bet: 195,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "1",
+      bet: 155,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "2",
+      bet: 284,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "3",
+      bet: 144,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "4",
+      bet: 324,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "5",
+      bet: 280,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "6",
+      bet: 229,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "7",
+      bet: 149,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "8",
+      bet: 296,
+    },
+    {
+      game: "starline",
+      type: "singleank",
+      time: "13:00:00",
+      number: "9",
+      bet: 240,
+    },
   ];
 
   // Mock data for Single Pana
   const singlePanaData: BidData[] = [
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "123", bet: 450 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "456", bet: 320 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "789", bet: 275 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "120", bet: 180 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "345", bet: 390 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "678", bet: 210 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "234", bet: 155 },
-    { game: "starline", type: "singlepana", time: "13:00:00", number: "567", bet: 480 },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "123",
+      bet: 450,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "456",
+      bet: 320,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "789",
+      bet: 275,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "120",
+      bet: 180,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "345",
+      bet: 390,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "678",
+      bet: 210,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "234",
+      bet: 155,
+    },
+    {
+      game: "starline",
+      type: "singlepana",
+      time: "13:00:00",
+      number: "567",
+      bet: 480,
+    },
   ];
 
   // Mock data for Double Pana
   const doublePanaData: BidData[] = [
-    { game: "starline", type: "doublepana", time: "13:00:00", number: "112", bet: 350 },
-    { game: "starline", type: "doublepana", time: "13:00:00", number: "334", bet: 420 },
-    { game: "starline", type: "doublepana", time: "13:00:00", number: "556", bet: 280 },
-    { game: "starline", type: "doublepana", time: "13:00:00", number: "778", bet: 195 },
-    { game: "starline", type: "doublepana", time: "13:00:00", number: "990", bet: 310 },
-    { game: "starline", type: "doublepana", time: "13:00:00", number: "223", bet: 265 },
+    {
+      game: "starline",
+      type: "doublepana",
+      time: "13:00:00",
+      number: "112",
+      bet: 350,
+    },
+    {
+      game: "starline",
+      type: "doublepana",
+      time: "13:00:00",
+      number: "334",
+      bet: 420,
+    },
+    {
+      game: "starline",
+      type: "doublepana",
+      time: "13:00:00",
+      number: "556",
+      bet: 280,
+    },
+    {
+      game: "starline",
+      type: "doublepana",
+      time: "13:00:00",
+      number: "778",
+      bet: 195,
+    },
+    {
+      game: "starline",
+      type: "doublepana",
+      time: "13:00:00",
+      number: "990",
+      bet: 310,
+    },
+    {
+      game: "starline",
+      type: "doublepana",
+      time: "13:00:00",
+      number: "223",
+      bet: 265,
+    },
   ];
 
   // Mock data for Triple Pana
   const triplePanaData: BidData[] = [
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "000", bet: 500 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "111", bet: 450 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "222", bet: 380 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "333", bet: 290 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "444", bet: 420 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "555", bet: 350 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "666", bet: 275 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "777", bet: 520 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "888", bet: 310 },
-    { game: "starline", type: "triplepana", time: "13:00:00", number: "999", bet: 460 },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "000",
+      bet: 500,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "111",
+      bet: 450,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "222",
+      bet: 380,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "333",
+      bet: 290,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "444",
+      bet: 420,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "555",
+      bet: 350,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "666",
+      bet: 275,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "777",
+      bet: 520,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "888",
+      bet: 310,
+    },
+    {
+      game: "starline",
+      type: "triplepana",
+      time: "13:00:00",
+      number: "999",
+      bet: 460,
+    },
   ];
 
   // Filter data by search query
-  const filterBySearch = useCallback((data: BidData[]) => {
-    if (!searchQuery) return data;
-    return data.filter(item => 
-      item.number.includes(searchQuery) || 
-      item.bet.toString().includes(searchQuery)
-    );
-  }, [searchQuery]);
+  const filterBySearch = useCallback(
+    (data: BidData[]) => {
+      if (!searchQuery) return data;
+      return data.filter(
+        (item) =>
+          item.number.includes(searchQuery) ||
+          item.bet.toString().includes(searchQuery)
+      );
+    },
+    [searchQuery]
+  );
 
-  const filteredSingleAnk = useMemo(() => filterBySearch(singleAnkData), [filterBySearch]);
-  const filteredSinglePana = useMemo(() => filterBySearch(singlePanaData), [filterBySearch]);
-  const filteredDoublePana = useMemo(() => filterBySearch(doublePanaData), [filterBySearch]);
-  const filteredTriplePana = useMemo(() => filterBySearch(triplePanaData), [filterBySearch]);
+  const filteredSingleAnk = useMemo(
+    () => filterBySearch(singleAnkData),
+    [filterBySearch]
+  );
+  const filteredSinglePana = useMemo(
+    () => filterBySearch(singlePanaData),
+    [filterBySearch]
+  );
+  const filteredDoublePana = useMemo(
+    () => filterBySearch(doublePanaData),
+    [filterBySearch]
+  );
+  const filteredTriplePana = useMemo(
+    () => filterBySearch(triplePanaData),
+    [filterBySearch]
+  );
 
   // Calculate totals
-  const allData = [...filteredSingleAnk, ...filteredSinglePana, ...filteredDoublePana, ...filteredTriplePana];
+  const allData = [
+    ...filteredSingleAnk,
+    ...filteredSinglePana,
+    ...filteredDoublePana,
+    ...filteredTriplePana,
+  ];
   const totalBets = allData.length;
   const totalAmount = allData.reduce((sum, item) => sum + item.bet, 0);
 
   // Copy helper function
   const copyToClipboard = useCallback((data: BidData[], label: string) => {
     const textToCopy = data
-      .map(item => `${item.game}\t${item.type}\t${item.time}\t${item.number}\t${item.bet}`)
+      .map(
+        (item) =>
+          `${item.game}\t${item.type}\t${item.time}\t${item.number}\t${item.bet}`
+      )
       .join("\n");
     navigator.clipboard.writeText(textToCopy);
     setCopyToast(`${label} copied!`);
@@ -107,7 +335,13 @@ export const ReportGenerationStarline = memo(() => {
       time: selectedTime,
       search: searchQuery,
     });
-  }, [selectedGameType, selectedGameList, selectedDate, selectedTime, searchQuery]);
+  }, [
+    selectedGameType,
+    selectedGameList,
+    selectedDate,
+    selectedTime,
+    searchQuery,
+  ]);
 
   const handleCopyAllBids = useCallback(() => {
     copyToClipboard(allData, "All bids");
@@ -149,11 +383,17 @@ export const ReportGenerationStarline = memo(() => {
                 key={index}
                 className="grid grid-cols-5 gap-2 p-3 border-b border-gray-100 text-sm items-center hover:bg-gray-50"
               >
-                <div className="text-left pl-3 font-medium text-gray-700">{item.game}</div>
+                <div className="text-left pl-3 font-medium text-gray-700">
+                  {item.game}
+                </div>
                 <div className="text-center text-gray-600">{item.type}</div>
                 <div className="text-center text-gray-600">{item.time}</div>
-                <div className="text-center font-bold text-blue-600">{item.number}</div>
-                <div className="text-center font-semibold text-green-600">₹{item.bet}</div>
+                <div className="text-center font-bold text-blue-600">
+                  {item.number}
+                </div>
+                <div className="text-center font-semibold text-green-600">
+                  ₹{item.bet}
+                </div>
               </div>
             ))
           ) : (
@@ -174,7 +414,7 @@ export const ReportGenerationStarline = memo(() => {
           {copyToast}
         </div>
       )}
-      
+
       {/* Filter Section */}
       <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
         <div className="grid grid-cols-2 gap-3 mb-3">
@@ -269,7 +509,9 @@ export const ReportGenerationStarline = memo(() => {
         <span className="text-gray-800 font-bold text-base">
           {selectedGameList} ({selectedTime.replace(" ", ":")})
         </span>
-        <span className="text-gray-800 font-bold text-base">{selectedDate}</span>
+        <span className="text-gray-800 font-bold text-base">
+          {selectedDate}
+        </span>
       </div>
 
       {/* Copy All Bids Button */}
