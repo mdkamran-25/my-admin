@@ -64,7 +64,7 @@ export const RulesSet = memo(() => {
   }, [newRule, selectedType]);
 
   const handleUpdate = useCallback(
-    (ruleId: string, type: "withdraw" | "addMoney") => {
+    (_ruleId: string, _type: "withdraw" | "addMoney") => {
       showToast("Rule updated successfully!");
     },
     []

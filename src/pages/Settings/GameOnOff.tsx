@@ -175,7 +175,7 @@ export const GameOnOff = memo(() => {
 
       {/* Game List */}
       <div className="space-y-2">
-        {games.map((game, index) => (
+        {games.map((game) => (
           <div
             key={game.id}
             className="bg-white rounded-xl p-4 shadow-sm flex items-center justify-between"
