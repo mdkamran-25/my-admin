@@ -14,28 +14,103 @@ interface WithdrawTransaction {
   username: string;
   date: string;
   time: string;
+  requestDate: string;
+  requestTime: string;
   amount: number;
   type: "request" | "manually";
 }
 
-// Mock data generator
-const generateMockWithdrawData = (): WithdrawTransaction[] => {
-  const transactions: WithdrawTransaction[] = [];
-
-  transactions.push({
+// Mock data matching screenshot
+const mockData: WithdrawTransaction[] = [
+  {
     id: "1",
     sn: 1,
+    username: "chand",
+    date: "A-25-11-2025",
+    time: "06:41 PM",
+    requestDate: "25-11-2025",
+    requestTime: "06:29 PM",
+    amount: 1000,
+    type: "request",
+  },
+  {
+    id: "2",
+    sn: 2,
+    username: "raja",
+    date: "A-25-11-2025",
+    time: "06:36 PM",
+    requestDate: "25-11-2025",
+    requestTime: "06:22 PM",
+    amount: 2000,
+    type: "request",
+  },
+  {
+    id: "3",
+    sn: 3,
+    username: "bilal",
+    date: "A-25-11-2025",
+    time: "06:54 PM",
+    requestDate: "25-11-2025",
+    requestTime: "06:20 PM",
+    amount: 1500,
+    type: "request",
+  },
+  {
+    id: "4",
+    sn: 4,
+    username: "mdjani",
+    date: "A-25-11-2025",
+    time: "06:49 PM",
+    requestDate: "25-11-2025",
+    requestTime: "06:19 PM",
+    amount: 500,
+    type: "request",
+  },
+  {
+    id: "5",
+    sn: 5,
     username: "Ajay",
-    date: "A-24-11-2025",
-    time: "12:03 AM",
-    amount: 48075,
+    date: "A-25-11-2025",
+    time: "05:30 PM",
+    requestDate: "25-11-2025",
+    requestTime: "05:15 PM",
+    amount: 3000,
     type: "manually",
-  });
-
-  return transactions;
-};
-
-const mockData = generateMockWithdrawData();
+  },
+  {
+    id: "6",
+    sn: 6,
+    username: "kumar",
+    date: "A-25-11-2025",
+    time: "04:20 PM",
+    requestDate: "25-11-2025",
+    requestTime: "04:10 PM",
+    amount: 2500,
+    type: "request",
+  },
+  {
+    id: "7",
+    sn: 7,
+    username: "Rahul",
+    date: "A-24-11-2025",
+    time: "11:45 AM",
+    requestDate: "24-11-2025",
+    requestTime: "11:30 AM",
+    amount: 5000,
+    type: "manually",
+  },
+  {
+    id: "8",
+    sn: 8,
+    username: "Priya",
+    date: "A-24-11-2025",
+    time: "10:30 AM",
+    requestDate: "24-11-2025",
+    requestTime: "10:15 AM",
+    amount: 1200,
+    type: "request",
+  },
+];
 
 export const WithdrawMoneyHistory = memo(() => {
   const [searchParams] = useSearchParams();
@@ -99,7 +174,7 @@ export const WithdrawMoneyHistory = memo(() => {
     return `${day}/${month}/${year}`;
   };
 
-  const displayDate = filters.date ? formatDate(filters.date) : "24/11/2025";
+  const displayDate = filters.date ? formatDate(filters.date) : "25/11/2025";
 
   return (
     <Layout onRefresh={handleRefresh}>
@@ -111,8 +186,8 @@ export const WithdrawMoneyHistory = memo(() => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-white rounded-xl p-4 shadow-sm mb-4 space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="mb-4">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           {/* Date */}
           <div className="relative">
             {!filters.date && (
@@ -140,41 +215,36 @@ export const WithdrawMoneyHistory = memo(() => {
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
             placeholder="Search for a ..."
-            className="px-4 py-3 border border-gray-300 rounded-full text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-3 border border-gray-300 rounded-full text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
           />
         </div>
 
-        {/* Filter Button */}
-        <button
-          onClick={() => setCurrentPage(1)}
-          className="w-full px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors"
-        >
-          Filter
-        </button>
-      </div>
+        {/* Filter Label */}
+        <div className="mb-2">
+          <span className="inline-block px-4 py-2 bg-cyan-500 text-white rounded-lg font-medium">
+            Filter
+          </span>
+        </div>
 
-      {/* Type Filter Pills */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {[
-          { value: "all", label: "All" },
-          { value: "request", label: "Request" },
-          { value: "manually", label: "Manully" },
-        ].map((type) => (
-          <button
-            key={type.value}
-            onClick={() => {
-              setFilters((prev) => ({ ...prev, type: type.value }));
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              filters.type === type.value
-                ? "bg-blue-600 text-white"
-                : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-            }`}
-          >
-            {type.label}
-          </button>
-        ))}
+        {/* Type Filter Pills */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {[
+            { value: "all", label: "All" },
+            { value: "request", label: "Request" },
+            { value: "manually", label: "Manually" },
+          ].map((type) => (
+            <button
+              key={type.value}
+              onClick={() => {
+                setFilters((prev) => ({ ...prev, type: type.value }));
+                setCurrentPage(1);
+              }}
+              className="px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
+            >
+              {type.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Total Banner */}
@@ -237,8 +307,13 @@ export const WithdrawMoneyHistory = memo(() => {
                         <div className="text-sm text-green-600 font-medium">
                           {txn.date}
                         </div>
-                        <div className="text-sm text-gray-600">{txn.time}</div>
-                        <div className="text-xs text-gray-500">**</div>
+                        <div className="text-sm text-green-600">{txn.time}</div>
+                        <div className="text-sm text-gray-600">
+                          {txn.requestDate}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {txn.requestTime}
+                        </div>
                       </td>
 
                       {/* Amount */}
@@ -246,7 +321,6 @@ export const WithdrawMoneyHistory = memo(() => {
                         <div className="font-bold text-lg text-gray-900">
                           {txn.amount}
                         </div>
-                        <div className="text-sm text-gray-600">{txn.type}</div>
                       </td>
                     </tr>
                   ))}

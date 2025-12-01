@@ -75,6 +75,10 @@ export const Dashboard = memo(() => {
     navigate("/withdraw-money-history");
   }, [navigate]);
 
+  const handleWithdrawMoneyClick = useCallback(() => {
+    navigate("/withdraw-money-history");
+  }, [navigate]);
+
   // Loading State
   if (loading) {
     return (
@@ -220,7 +224,7 @@ export const Dashboard = memo(() => {
         </div>
 
         {/* Total Withdraw Money */}
-        <div>
+        <div onClick={handleWithdrawMoneyClick} className="cursor-pointer">
           <GameStatsCard
             title="Total Withdraw Money"
             variant="withdraw"
