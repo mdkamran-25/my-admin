@@ -1,6 +1,7 @@
 // Result & Report Page - displays game results
 
 import { memo, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "../../components/layout/Layout";
 import { BackButton } from "../../components/common/BackButton";
 
@@ -12,11 +13,29 @@ interface GameResult {
   closeTime: string;
   openResult: string;
   closeResult?: string;
+  ank?: string;
+}
+
+interface PostResultModal {
+  isOpen: boolean;
+  gameName: string;
+  gameId: string;
+  date: string;
+  ank: string;
 }
 
 export const ResultReport = memo(() => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState("2025-11-25");
   const [expandedGameId, setExpandedGameId] = useState<string | null>(null);
+  const [resultModal, setResultModal] = useState<PostResultModal>({
+    isOpen: false,
+    gameName: "",
+    gameId: "",
+    date: "",
+    ank: "",
+  });
+  const [resultInput, setResultInput] = useState("");
 
   // Mock data - replace with API call
   const games: GameResult[] = [
@@ -102,18 +121,51 @@ export const ResultReport = memo(() => {
     console.log(`Bid Reverse for ${gameName}`);
   }, []);
 
-  const handleAddCloseResult = useCallback((gameName: string) => {
-    console.log(`Add Close Result for ${gameName}`);
+  const handleAddCloseResult = useCallback((game: GameResult) => {
+    // Extract ank from openResult (e.g., "578-1" -> "1")
+    const ank = game.openResult.split("-")[1] || "";
+    setResultModal({
+      isOpen: true,
+      gameName: game.name,
+      gameId: game.id,
+      date: game.date,
+      ank: ank,
+    });
+    setResultInput("");
   }, []);
 
-  const handleCloseReport = useCallback((gameName: string) => {
-    console.log(`Close Report for ${gameName}`);
+  const handleModalClose = useCallback(() => {
+    setResultModal({
+      isOpen: false,
+      gameName: "",
+      gameId: "",
+      date: "",
+      ank: "",
+    });
+    setResultInput("");
   }, []);
+
+  const handleResultSubmit = useCallback(() => {
+    if (resultInput.trim()) {
+      console.log(
+        `Submitting result ${resultInput} for ${resultModal.gameName}`
+      );
+      // TODO: API call to submit result
+      handleModalClose();
+    }
+  }, [resultInput, resultModal.gameName, handleModalClose]);
+
+  const handleCloseReport = useCallback(
+    (gameName: string) => {
+      navigate("/report-generation", { state: { gameName } });
+    },
+    [navigate]
+  );
 
   return (
     <Layout>
       <BackButton />
-      
+
       {/* Date Filter */}
       <div className="mb-4">
         <input
@@ -184,7 +236,7 @@ export const ResultReport = memo(() => {
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleAddCloseResult(game.name)}
+                          onClick={() => handleAddCloseResult(game)}
                           className="w-full px-4 py-2 bg-cyan-500 text-white rounded-full text-sm font-semibold mb-3 hover:bg-cyan-600"
                         >
                           Add Close Result
@@ -204,6 +256,71 @@ export const ResultReport = memo(() => {
           );
         })}
       </div>
+
+      {/* Post Result Modal */}
+      {resultModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={handleModalClose}
+          />
+
+          {/* Modal Content */}
+          <div className="relative bg-white rounded-lg shadow-xl w-[90%] max-w-sm mx-4 overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-amber-600 text-white py-3 px-4 text-center">
+              <p className="text-lg font-semibold">
+                {resultModal.date.split("/").join("/")}
+              </p>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 text-center">
+              <h3 className="text-xl font-semibold text-gray-800 mb-1">
+                Post Result
+              </h3>
+              <p className="text-lg font-bold text-gray-700 mb-1">
+                {resultModal.gameName}
+              </p>
+              <p className="text-gray-600 mb-1">{resultModal.date}</p>
+              <p className="text-gray-600 mb-4">Ank : {resultModal.ank}</p>
+
+              {/* Result Input */}
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={resultInput}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  setResultInput(value);
+                }}
+                placeholder="Enter result"
+                className="w-full px-4 py-3 border border-blue-400 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
+                autoFocus
+              />
+
+              {/* Action Buttons */}
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={handleResultSubmit}
+                  disabled={!resultInput.trim()}
+                  className="px-8 py-2.5 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-indigo-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                >
+                  OK
+                </button>
+                <button
+                  onClick={handleModalClose}
+                  className="px-6 py-2.5 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 });
