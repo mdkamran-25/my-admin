@@ -130,17 +130,20 @@ export const GameOnOff = memo(() => {
     setTimeout(() => setToast(null), 2000);
   };
 
-  const handleToggle = useCallback((gameId: string) => {
-    setGames((prevGames) =>
-      prevGames.map((game) =>
-        game.id === gameId ? { ...game, isOn: !game.isOn } : game
-      )
-    );
-    const game = games.find((g) => g.id === gameId);
-    if (game) {
-      showToast(`${game.name} turned ${game.isOn ? "OFF" : "ON"}`);
-    }
-  }, [games]);
+  const handleToggle = useCallback(
+    (gameId: string) => {
+      setGames((prevGames) =>
+        prevGames.map((game) =>
+          game.id === gameId ? { ...game, isOn: !game.isOn } : game
+        )
+      );
+      const game = games.find((g) => g.id === gameId);
+      if (game) {
+        showToast(`${game.name} turned ${game.isOn ? "OFF" : "ON"}`);
+      }
+    },
+    [games]
+  );
 
   const handleRefresh = useCallback(() => {
     console.log("Refreshing games...");
